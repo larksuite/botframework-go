@@ -1,0 +1,35 @@
+ServiceInfo:
+  Path: github.com/larksuite/demo  # relative path in GOPATH or go module name
+  GenCodePath:  # Code generation absolute path. If it is empty, the configuration item named "Path" will be used.
+  EventWebhook: /webhook/event
+  CardWebhook: /webhook/card
+  AppID: cli_9de0ff6df7bc910c # your app id
+  Description: test_demo      # your app description
+  IsISVApp: false             # ISV App flag, false is default
+EventList:
+  - EventName: Message        # required
+  # - EventName: AppTicket      # use as needed, ISVApp must
+  # - EventName: Approval       # use as needed
+  # - EventName: LeaveApproval  # use as needed
+  # - EventName: WorkApproval   # use as needed
+  # - EventName: ShiftApproval  # use as needed
+  # - EventName: RemedyApproval # use as needed
+  # - EventName: TripApproval   # use as needed
+  # - EventName: AppOpen        # use as needed
+  # - EventName: ContactUser    # use as needed
+  # - EventName: ContactDept    # use as needed
+  # - EventName: ContactScope   # use as needed
+  # - EventName: RemoveBot      # use as needed
+  # - EventName: AddBot         # use as needed
+  # - EventName: P2PChatCreate  # use as needed
+CommandList:
+  - Cmd: default # required
+    Description: Text that is empty or isnot matched
+  - Cmd: help
+    Description: Text that begin with the word help
+  - Cmd: show
+    Description: Text that begin with the word show
+CardActionList:
+  - MethodName: create
+  - MethodName: delete
+  - MethodName: update

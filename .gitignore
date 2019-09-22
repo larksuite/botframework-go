@@ -1,0 +1,11 @@
+.vscode/
+
+.idea
+.DS_Store
+*.log
+*.swp
+*.out
+
+demo1.yml
+botframework-go
+go.sum
