@@ -71,19 +71,45 @@ func TestSendRichTextMessage(t *testing.T) {
 		Type: protocol.UserTypeOpenID,
 	}
 
-	text := "this is a test"
-	elem := &protocol.RichTextElementForm{
-		Tag:  "text",
-		Text: &text,
-	}
-	content := &protocol.RichTextContent{}
-	content.AddElementBlock(elem)
-	postForm := map[protocol.Language]*protocol.RichTextForm{
-		protocol.EnUS: &protocol.RichTextForm{
-			Title:   "THIS IS A TITLE",
-			Content: content,
-		},
-	}
+	postForm := make(map[protocol.Language]*protocol.RichTextForm)
+
+	// en-us
+	titleUS := "this is a title"
+	contentUS := message.NewRichTextContent()
+
+	// first line
+	contentUS.AddElementBlock(
+		message.NewTextTag("first line: ", true, 1),
+		message.NewATag("hyperlinks ", true, "https://www.feishu.cn"),
+		message.NewAtTag("username", userID),
+	)
+
+	// second line
+	contentUS.AddElementBlock(
+		message.NewTextTag("second line: ", true, 1),
+		message.NewTextTag("text test", true, 1),
+	)
+
+	postForm[protocol.EnUS] = message.NewRichTextForm(&titleUS, contentUS)
+
+	// zh-cn
+	titleCN := "这是一个标题"
+	contentCN := message.NewRichTextContent()
+
+	// first line
+	contentCN.AddElementBlock(
+		message.NewTextTag("第一行: ", true, 1),
+		message.NewATag("超链接 ", true, "https://www.feishu.cn"),
+		message.NewAtTag("username", userID),
+	)
+
+	// second line
+	contentCN.AddElementBlock(
+		message.NewTextTag("第二行: ", true, 1),
+		message.NewTextTag("文本测试", true, 1),
+	)
+
+	postForm[protocol.ZhCN] = message.NewRichTextForm(&titleCN, contentCN)
 
 	resp, err := message.SendRichTextMessage(c, tenantKey, appConf.AppID, user, "", postForm)
 	if err != nil {
@@ -96,10 +122,12 @@ func TestSendRichTextMessage(t *testing.T) {
 func TestSendShareChatMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendShareChatMessage(c, tenantKey, appConf.AppID, user, "", chatID)
 	if err != nil {
 		t.Errorf("SendShareChatMessage: failed err[%v]", err)
@@ -116,26 +144,63 @@ func TestSendCardMessage(t *testing.T) {
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
-	url := "https://www.google.com"
-	content := "card message test"
-	card := protocol.CardForm{
-		Config: &protocol.ConfigForm{MinVersion: protocol.VersionForm{Version: "1.0"},
-			Debug:          true,
-			WideScreenMode: true,
-		},
-		CardLink: &protocol.URLForm{
-			Url: &url,
-		},
-		Header: &protocol.CardHeaderForm{
-			Title: protocol.TextForm{
-				Tag:     protocol.PLAIN_TEXT_E,
-				Content: &content,
-			},
-			Template: "",
-		},
-		Elements: []interface{}{},
+
+	//card builder
+	builder := &message.CardBuilder{}
+
+	//add config
+	config := protocol.ConfigForm{
+		MinVersion:     protocol.VersionForm{},
+		WideScreenMode: true,
 	}
-	resp, err := message.SendCardMessage(c, tenantKey, appConf.AppID, user, "", card, true)
+	builder.SetConfig(config)
+
+	//add header
+	content := "Please choose color"
+	line := 1
+	title := protocol.TextForm{
+		Tag:     protocol.PLAIN_TEXT_E,
+		Content: &content,
+		Lines:   &line,
+	}
+	builder.AddHeader(title, "")
+
+	//add hr
+	builder.AddHRBlock()
+
+	//add block
+	builder.AddDIVBlock(nil, []protocol.FieldForm{
+		*message.NewField(false, message.NewMDText("**Async**", nil, nil, nil)),
+	}, nil)
+
+	//add divBlock
+	builder.AddDIVBlock(nil, []protocol.FieldForm{
+		*message.NewField(false, message.NewMDText("**Sync**", nil, nil, nil)),
+	}, nil)
+
+	//add actionBlock
+	payload1 := make(map[string]string, 0)
+	payload1["color"] = "red"
+	builder.AddActionBlock([]protocol.ActionElement{
+		message.NewButton(message.NewMDText("red", nil, nil, nil),
+			nil, nil, payload1, protocol.PRIMARY, nil, "asyncButton"),
+	})
+
+	//add jumpBlock
+	url := "https://www.google.com"
+	ext := message.NewJumpButton(message.NewMDText("jump to google", nil, nil, nil), &url, nil, protocol.DEFAULT)
+	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, ext)
+
+	//add imageBlock
+	builder.AddImageBlock(
+		message.NewMDText("", nil, nil, nil),
+		*message.NewMDText("", nil, nil, nil),
+		imageKey)
+
+	//generate card
+	card, err := builder.BuildForm()
+
+	resp, err := message.SendCardMessage(c, tenantKey, appConf.AppID, user, "", *card, true)
 	if err != nil {
 		t.Errorf("SendCardMessage: failed err[%v]", err)
 	} else {
@@ -205,25 +270,53 @@ func TestSendImageMessageBatch(t *testing.T) {
 func TestSendRichTextMessageBatch(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
+
 	info := &protocol.BatchBaseInfo{
 		DepartmentIDs: []string{},
 		OpenIDs:       []string{openID},
 		UserIDs:       []string{},
 	}
-	text := "this is a test"
-	elem := &protocol.RichTextElementForm{
-		Tag:      "text",
-		Text:     &text,
-		ImageKey: imageKey,
-	}
-	content := &protocol.RichTextContent{}
-	content.AddElementBlock(elem)
-	postForm := map[protocol.Language]*protocol.RichTextForm{
-		protocol.EnUS: &protocol.RichTextForm{
-			Title:   "THIS IS A TITLE",
-			Content: content,
-		},
-	}
+
+	postForm := make(map[protocol.Language]*protocol.RichTextForm)
+
+	// en-us
+	titleUS := "this is a title"
+	contentUS := message.NewRichTextContent()
+
+	// first line
+	contentUS.AddElementBlock(
+		message.NewTextTag("first line: ", true, 1),
+		message.NewATag("hyperlinks ", true, "https://www.feishu.cn"),
+		message.NewAtTag("username", userID),
+	)
+
+	// second line
+	contentUS.AddElementBlock(
+		message.NewTextTag("second line: ", true, 1),
+		message.NewTextTag("text test", true, 1),
+	)
+
+	postForm[protocol.EnUS] = message.NewRichTextForm(&titleUS, contentUS)
+
+	// zh-cn
+	titleCN := "这是一个标题"
+	contentCN := message.NewRichTextContent()
+
+	// first line
+	contentCN.AddElementBlock(
+		message.NewTextTag("第一行: ", true, 1),
+		message.NewATag("超链接 ", true, "https://www.feishu.cn"),
+		message.NewAtTag("username", userID),
+	)
+
+	// second line
+	contentCN.AddElementBlock(
+		message.NewTextTag("第二行: ", true, 1),
+		message.NewTextTag("文本测试", true, 1),
+	)
+
+	postForm[protocol.ZhCN] = message.NewRichTextForm(&titleCN, contentCN)
+
 	resp, err := message.SendRichTextMessageBatch(c, tenantKey, appConf.AppID, info, "", postForm)
 	if err != nil {
 		t.Errorf("SendRichTextMessageBatch: failed err[%v]", err)

@@ -99,7 +99,8 @@ func EventCallback(ctx context.Context, body string, appID string) (string, erro
 
 	// check token
 	if callbackBase.Token != appConf.VerifyToken {
-		return "", common.ErrEventVeriToken.Error()
+		return "", common.ErrEventVeriToken.ErrorWithExtStr(
+			fmt.Sprintf("eventVTokenSize[%d]confVTokenSize[%d]", len(callbackBase.Token), len(appConf.VerifyToken)))
 	}
 
 	// dispatch event type

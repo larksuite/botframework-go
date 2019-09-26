@@ -12,21 +12,22 @@ const (
 
 const (
 	// notification-subtype
-	EventTypeApproval       = "approval"                         // notification--approval
-	EventTypeLeaveApproval  = "leave_approval"                   // notification--leave_approval
-	EventTypeWorkApproval   = "work_approval"                    // notification--work_approval
-	EventTypeShiftApproval  = "shift_approval"                   // notification--shift_approval
-	EventTypeRemedyApproval = "remedy_approval"                  // notification--remedy_approval
-	EventTypeTripApproval   = "trip_approval"                    // notification--trip_approval
-	EventTypeAppOpen        = "app_open"                         // notification--app_open
-	EventTypeContactUser    = "user_add,user_update,user_leave"  // notification--contact_user
-	EventTypeContactDept    = "dept_add,dept_update,dept_delete" // notification--contact_Department
-	EventTypeContactScope   = "contact_scope_change"             // notification--contact_scope
-	EventTypeMessage        = "message"                          // notification--message
-	EventTypeRemoveBot      = "remove_bot"                       // notification--remove_bot
-	EventTypeAddBot         = "add_bot"                          // notification--add_bot
-	EventTypeP2PChatCreate  = "p2p_chat_create"                  // notification--p2p_chat_create
-	EventTypeAppTicket      = "app_ticket"                       // notification--app_ticket
+	EventTypeApproval        = "approval"                         // notification--approval
+	EventTypeLeaveApproval   = "leave_approval"                   // notification--leave_approval
+	EventTypeWorkApproval    = "work_approval"                    // notification--work_approval
+	EventTypeShiftApproval   = "shift_approval"                   // notification--shift_approval
+	EventTypeRemedyApproval  = "remedy_approval"                  // notification--remedy_approval
+	EventTypeTripApproval    = "trip_approval"                    // notification--trip_approval
+	EventTypeAppOpen         = "app_open"                         // notification--app_open
+	EventTypeContactUser     = "user_add,user_update,user_leave"  // notification--contact_user
+	EventTypeContactDept     = "dept_add,dept_update,dept_delete" // notification--contact_Department
+	EventTypeContactScope    = "contact_scope_change"             // notification--contact_scope
+	EventTypeMessage         = "message"                          // notification--message
+	EventTypeRemoveBot       = "remove_bot"                       // notification--remove_bot
+	EventTypeAddBot          = "add_bot"                          // notification--add_bot
+	EventTypeP2PChatCreate   = "p2p_chat_create"                  // notification--p2p_chat_create
+	EventTypeAppTicket       = "app_ticket"                       // notification--app_ticket
+	EventTypeAppStatusChange = "app_status_change"                // notification--app_status
 )
 
 const (
@@ -290,6 +291,18 @@ type AppTicketEvent struct {
 	Type      string `json:"type"`
 	AppID     string `json:"app_id"`
 	AppTicket string `json:"app_ticket"`
+}
+
+const (
+	StartByTenant  = "start_by_tenant"
+	StopByTenant   = "stop_by_tenant"
+	StopByPlatform = "stop_by_platform"
+)
+
+type AppStatusChangeEvent struct {
+	BaseEvent
+
+	Status string `json:"status"` // StartByTenant/StopByTenant/StopByPlatform
 }
 
 // url challenge

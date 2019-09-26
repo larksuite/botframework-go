@@ -140,13 +140,14 @@ type UpLoadImageResponse struct {
 
 type SendMsgRequest struct {
 	BaseInfo
+
 	MsgType string         `json:"msg_type,omitempty" validate:"required"`
 	Content MessageContent `json:"content,omitempty" validate:"required"`
 }
 
 type SendMsgResponse struct {
-	Code int64  `json:"code,omitempty" validate:"omitempty"`
-	Msg  string `json:"msg,omitempty" validate:"omitempty"`
+	BaseResponse
+
 	Data struct {
 		MessageID string `json:"message_id,omitempty" validate:"omitempty"`
 	} `json:"data,omitempty" validate:"omitempty"`
@@ -154,13 +155,14 @@ type SendMsgResponse struct {
 
 type SendMsgBatchRequest struct {
 	BatchBaseInfo
+
 	MsgType string         `json:"msg_type,omitempty" validate:"required"`
 	Content MessageContent `json:"content,omitempty" validate:"required"`
 }
 
 type SendMsgBatchResponse struct {
-	Code int64  `json:"code,omitempty" validate:"omitempty"`
-	Msg  string `json:"msg,omitempty" validate:"omitempty"`
+	BaseResponse
+
 	Data struct {
 		MessageID            string   `json:"message_id,omitempty" validate:"omitempty"`
 		InvalidDepartmentIDs []string `json:"invalid_department_ids,omitempty" validate:"omitempty"`
@@ -171,14 +173,20 @@ type SendMsgBatchResponse struct {
 
 type SendCardMsgRequest struct {
 	BaseInfo
+
+	UUID        string   `json:"uuid,omitempty" validate:"omitempty"`
 	MsgType     string   `json:"msg_type,omitempty" validate:"required"`
 	Card        CardForm `json:"card,omitempty" validate:"omitempty"`
 	UpdateMulti bool     `json:"update_multi" validate:"omitempty"`
 }
 
+func (s *SendCardMsgRequest) SetUUID(UUID string) {
+	s.UUID = UUID
+}
+
 type SendCardMsgResponse struct {
-	Code int32  `json:"code,omitempty" validate:"omitempty"`
-	Msg  string `json:"msg,omitempty" validate:"omitempty"`
+	BaseResponse
+
 	Data struct {
 		MessageID string `json:"message_id,omitempty" validate:"omitempty"`
 	} `json:"data,omitempty" validate:"omitempty"`
@@ -186,14 +194,15 @@ type SendCardMsgResponse struct {
 
 type SendCardMsgBatchRequest struct {
 	BatchBaseInfo
+
 	MsgType     string   `json:"msg_type,omitempty" validate:"required"`
 	Card        CardForm `json:"card,omitempty" validate:"omitempty"`
 	UpdateMulti bool     `json:"update_multi" validate:"omitempty"`
 }
 
 type SendCardMsgBatchResponse struct {
-	Code int64  `json:"code,omitempty" validate:"omitempty"`
-	Msg  string `json:"msg,omitempty" validate:"omitempty"`
+	BaseResponse
+
 	Data struct {
 		MessageID            string   `json:"message_id,omitempty" validate:"omitempty"`
 		InvalidDepartmentIDs []string `json:"invalid_department_ids,omitempty" validate:"omitempty"`
