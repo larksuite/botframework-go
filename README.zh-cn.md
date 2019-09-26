@@ -23,6 +23,7 @@
 - 机器人被邀请进入群聊
 - 用户和机器人的会话首次被创建
 - app_ticket事件
+- 应用启动、停用事件
 
 ## 授权
 获取 tenant_access_token (支持 ISV apps or internal apps)
@@ -63,41 +64,41 @@ postForm := make(map[protocol.Language]*protocol.RichTextForm)
 
 // en-us
 titleUS := "this is a title"
-contentUS := NewRichTextContent()
+contentUS := message.NewRichTextContent()
 
 // first line
 contentUS.AddElementBlock(
-    NewTextTag("first line :", true, 1),
-    NewATag("hyperlinks", true, "https://www.feishu.cn"),
-    NewAtTag("username", "userid"),
+    message.NewTextTag("first line: ", true, 1),
+    message.NewATag("hyperlinks ", true, "https://www.feishu.cn"),
+    message.NewAtTag("username", userID),
 )
 
 // second line
 contentUS.AddElementBlock(
-    NewTextTag("second line :", true, 1),
-    NewTextTag("text test", true, 1),
+    message.NewTextTag("second line: ", true, 1),
+    message.NewTextTag("text test", true, 1),
 )
 
-postForm[protocol.EnUS] = NewRichTextForm(&titleUS, contentUS)
+postForm[protocol.EnUS] = message.NewRichTextForm(&titleUS, contentUS)
 
 // zh-cn
 titleCN := "这是一个标题"
-contentCN := NewRichTextContent()
+contentCN := message.NewRichTextContent()
 
 // first line
 contentCN.AddElementBlock(
-    NewTextTag("第一行 :", true, 1),
-    NewATag("超链接", true, "https://www.feishu.cn"),
-    NewAtTag("username", "userid"),
+    message.NewTextTag("第一行: ", true, 1),
+    message.NewATag("超链接 ", true, "https://www.feishu.cn"),
+    message.NewAtTag("username", userID),
 )
 
 // second line
 contentCN.AddElementBlock(
-    NewTextTag("第二行 :", true, 1),
-    NewTextTag("文本测试", true, 1),
+    message.NewTextTag("第二行: ", true, 1),
+    message.NewTextTag("文本测试", true, 1),
 )
 
-postForm[protocol.ZhCN] = NewRichTextForm(&titleCN, contentCN)
+postForm[protocol.ZhCN] = message.NewRichTextForm(&titleCN, contentCN)
 ```
 之后, 可以调用SendRichTextMessage函数发送富文本信息
 
@@ -105,13 +106,15 @@ postForm[protocol.ZhCN] = NewRichTextForm(&titleCN, contentCN)
 构造卡片代码事例
 ```go
 //card builder
-builder := &CardBuilder{}
+builder := &message.CardBuilder{}
+
 //add config
 config := protocol.ConfigForm{
     MinVersion:     protocol.VersionForm{},
     WideScreenMode: true,
 }
 builder.SetConfig(config)
+
 //add header
 content := "Please choose color"
 line := 1
@@ -121,33 +124,39 @@ title := protocol.TextForm{
     Lines:   &line,
 }
 builder.AddHeader(title, "")
+
 //add hr
 builder.AddHRBlock()
+
 //add block
 builder.AddDIVBlock(nil, []protocol.FieldForm{
-    *NewField(false, NewMDText("**Async**", nil, nil, nil)),
+    *message.NewField(false, message.NewMDText("**Async**", nil, nil, nil)),
 }, nil)
+
 //add divBlock
 builder.AddDIVBlock(nil, []protocol.FieldForm{
-    *NewField(false, NewMDText("**Sync**", nil, nil, nil)),
+    *message.NewField(false, message.NewMDText("**Sync**", nil, nil, nil)),
 }, nil)
+
 //add actionBlock
 payload1 := make(map[string]string, 0)
 payload1["color"] = "red"
 builder.AddActionBlock([]protocol.ActionElement{
-    NewButton(NewMDText("red", nil, nil, nil),
+    message.NewButton(message.NewMDText("red", nil, nil, nil),
         nil, nil, payload1, protocol.PRIMARY, nil, "asyncButton"),
 })
+
 //add jumpBlock
 url := "https://www.google.com"
-ext := NewJumpButton(NewMDText("jump to google", nil, nil, nil), &url, nil, protocol.DEFAULT)
-builder.AddDIVBlock(NewMDText("", nil, nil, nil), nil, ext)
+ext := message.NewJumpButton(message.NewMDText("jump to google", nil, nil, nil), &url, nil, protocol.DEFAULT)
+builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, ext)
+
 //add imageBlock
-//add block
 builder.AddImageBlock(
-    NewMDText("", nil, nil, nil),
-    *NewMDText("", nil, nil, nil),
-    testConf.imageKey)
+    message.NewMDText("", nil, nil, nil),
+    *message.NewMDText("", nil, nil, nil),
+    imageKey)
+
 //generate card
 card, err := builder.BuildForm()
 ```
@@ -176,21 +185,22 @@ ServiceInfo:
   Description: test_demo  # 应用描述信息
   IsISVApp: false         # ISV 应用标志, 默认为非ISV应用
 EventList:
-  - EventName: Message        # 必须
-  # - EventName: AppTicket      # 按需使用, ISV应用 必须订阅
-  # - EventName: Approval       # 按需使用
-  # - EventName: LeaveApproval  # 按需使用
-  # - EventName: WorkApproval   # 按需使用
-  # - EventName: ShiftApproval  # 按需使用
-  # - EventName: RemedyApproval # 按需使用
-  # - EventName: TripApproval   # 按需使用
-  # - EventName: AppOpen        # 按需使用
-  # - EventName: ContactUser    # 按需使用
-  # - EventName: ContactDept    # 按需使用
-  # - EventName: ContactScope   # 按需使用
-  # - EventName: RemoveBot      # 按需使用
-  # - EventName: AddBot         # 按需使用
-  # - EventName: P2PChatCreate  # 按需使用
+  - EventName: Message           # 必须
+  # - EventName: AppTicket       # 按需使用, ISV应用 必须订阅
+  # - EventName: Approval        # 按需使用
+  # - EventName: LeaveApproval   # 按需使用
+  # - EventName: WorkApproval    # 按需使用
+  # - EventName: ShiftApproval   # 按需使用
+  # - EventName: RemedyApproval  # 按需使用
+  # - EventName: TripApproval    # 按需使用
+  # - EventName: AppOpen         # 按需使用
+  # - EventName: ContactUser     # 按需使用
+  # - EventName: ContactDept     # 按需使用
+  # - EventName: ContactScope    # 按需使用
+  # - EventName: RemoveBot       # 按需使用
+  # - EventName: AddBot          # 按需使用
+  # - EventName: P2PChatCreate   # 按需使用
+  # - EventName: AppStatusChange # 按需使用
 CommandList:
   - Cmd: Default # 必须
     Description: 表示默认命令，群聊只@机器人而不输入任何其他内容，或收到未定义的命令时
