@@ -59,10 +59,12 @@ var (
 	ErrImageParams       = &ErrCodeMsg{Code: 3001, Message: "postform params error"}
 	ErrGenBinImageFailed = &ErrCodeMsg{Code: 3001, Message: "generate binary image error"}
 
+	ErrCardUpdateParams = &ErrCodeMsg{Code: 3100, Message: "update card params error"}
+
 	// 4. chat 4000 - 4999
 	ErrChatParams = &ErrCodeMsg{Code: 4000, Message: "chat params error"}
 
-	// 5. event 4000 - 4999
+	// 5. event 5000 - 5999
 	ErrEventTypeRegister      = &ErrCodeMsg{Code: 5000, Message: "event type register handler error"}
 	ErrEventManagerNotInit    = &ErrCodeMsg{Code: 5001, Message: "event not init"}
 	ErrEventParams            = &ErrCodeMsg{Code: 5002, Message: "event params error"}
@@ -95,4 +97,12 @@ var (
 	ErrCardMetaInvalid      = &ErrCodeMsg{Code: 5207, Message: "card action callback meta invalid"}
 	ErrCardHandlerIsNil     = &ErrCodeMsg{Code: 5208, Message: "card action handler not found"}
 	ErrCardHandlerFailed    = &ErrCodeMsg{Code: 5209, Message: "card action handler failed"}
+
+	// 6. authentication 6000 - 6999
+	ErrValidateParams     = &ErrCodeMsg{Code: 6000, Message: "authentication-login params error"}
+	ErrAuthParams         = &ErrCodeMsg{Code: 6001, Message: "authentication-auth  params error"}
+	ErrMinaCodeGetParams  = &ErrCodeMsg{Code: 6002, Message: "mini-program codeToSession get params error"}
+	ErrMinaSetAuth        = &ErrCodeMsg{Code: 6003, Message: "mini-program set auth-user-info error"}
+	ErrMinaGetAuth        = &ErrCodeMsg{Code: 6004, Message: "mini-program get auth-user-info error"}
+	ErrMinaSessionInvalid = &ErrCodeMsg{Code: 6005, Message: "mini-program session invalid"}
 )

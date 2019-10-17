@@ -13,12 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	// context key --> log key
-	ctxKeyMap = map[string]string{"request_id": "request_id"}
-)
-
-type LogOption struct {
+type CommonLoggerOption struct {
 	Level           logrus.Level
 	TimestampFormat string
 	FullTimestamp   bool
@@ -27,8 +22,8 @@ type LogOption struct {
 	FilePathMap     lfshook.PathMap
 }
 
-func DefaultOption() LogOption {
-	return LogOption{
+func DefaultOption() *CommonLoggerOption {
+	return &CommonLoggerOption{
 		Level:           logrus.DebugLevel,
 		TimestampFormat: "2006-01-02 15:04:05.000",
 		FullTimestamp:   true,
@@ -43,7 +38,23 @@ func DefaultOption() LogOption {
 	}
 }
 
-func InitLogger(option LogOption) {
+type CommonLogger struct {
+	KeyMap map[string]string
+}
+
+func NewCommonLogger() *CommonLogger {
+	log := &CommonLogger{}
+	log.RegistFieldName("request_id", "request_id")
+
+	return log
+}
+
+func (l *CommonLogger) Init(op interface{}) {
+	option, ok := op.(*CommonLoggerOption)
+	if !ok {
+		option = DefaultOption()
+	}
+
 	logrus.SetLevel(option.Level)
 
 	customFormatter := new(logrus.TextFormatter)
@@ -63,14 +74,14 @@ func InitLogger(option LogOption) {
 }
 
 // FlushLogger Flush
-func FlushLogger() {
+func (l *CommonLogger) Flush() {
 
 }
 
-func Logger(ctx context.Context) *logrus.Entry {
+func (l *CommonLogger) GetLogger(ctx context.Context) LogEntry {
 	fields := logrus.Fields{}
 	if ctx != nil {
-		for ctxKey, logKey := range ctxKeyMap {
+		for ctxKey, logKey := range l.KeyMap {
 			if contextValue := ctx.Value(ctxKey); contextValue != nil {
 				fields[logKey] = fmt.Sprint(contextValue)
 			}
@@ -80,10 +91,15 @@ func Logger(ctx context.Context) *logrus.Entry {
 	return logrus.WithFields(fields)
 }
 
-func RegistFieldName(ctxFieldName, logFieldName string) (oldLogFieldName string) {
-	if logFieldName, ok := ctxKeyMap[ctxFieldName]; ok {
+func (l *CommonLogger) RegistFieldName(ctxFieldName, logFieldName string) (oldLogFieldName string) {
+	if l.KeyMap == nil {
+		l.KeyMap = make(map[string]string)
+	}
+
+	if logFieldName, ok := l.KeyMap[ctxFieldName]; ok {
 		return logFieldName
 	}
-	ctxKeyMap[ctxFieldName] = logFieldName
+
+	l.KeyMap[ctxFieldName] = logFieldName
 	return ""
 }

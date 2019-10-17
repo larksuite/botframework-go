@@ -25,11 +25,9 @@ func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*
 		return nil, err
 	}
 
-	params := map[string]string{
-		"chat_id": chatID,
-	}
+	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken),
+		protocol.GenGetGroupInfoRequest(chatID))
 
-	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken), params)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -57,12 +55,9 @@ func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pag
 		return nil, err
 	}
 
-	params := map[string]string{
-		"page_size":  fmt.Sprintf("%d", pageSize),
-		"page_token": pageToken,
-	}
+	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken),
+		protocol.GenGetGroupListRequest(pageSize, pageToken))
 
-	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken), params)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}

@@ -192,6 +192,15 @@ type SendCardMsgResponse struct {
 	} `json:"data,omitempty" validate:"omitempty"`
 }
 
+type UpdateCardRequest struct {
+	Token string   `json:"token" validate:"omitempty"`
+	Card  CardForm `json:"card" validate:"omitempty"`
+}
+
+type UpdateCardResponse struct {
+	BaseResponse
+}
+
 type SendCardMsgBatchRequest struct {
 	BatchBaseInfo
 

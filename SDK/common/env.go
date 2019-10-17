@@ -5,31 +5,33 @@
 package common
 
 var (
-	isOutsideMainlandChina bool = false
-	isStaging              bool = false // Used only for internal testing
+	isFeishuOrLark bool = true
+
+	hostFeishu string = "https://open.feishu.cn"
+	hostLark   string = "https://open.larksuite.com"
 )
 
-// outside mainland China, need set "OutsideMainlandChina" flag
-func SetOutsideMainlandChina(flag bool) {
-	isOutsideMainlandChina = flag
+func SetFeishu() {
+	isFeishuOrLark = true
 }
 
-// Used only for internal testing
-func SetStaging(flag bool) {
-	isStaging = flag
+func SetLark() {
+	isFeishuOrLark = false
+}
+
+func ReplaceFeishuHost(host string) {
+	hostFeishu = host
+}
+
+func ReplaceLarkHost(host string) {
+	hostLark = host
 }
 
 // GetOpenPlatformHost outside mainland China use https://open.larksuite.com , in Mainland China use https://open.feishu.cn
 func GetOpenPlatformHost() string {
-	if isOutsideMainlandChina {
-		if isStaging {
-			return "https://open.larksuite-staging.com"
-		}
-		return "https://open.larksuite.com"
+	if isFeishuOrLark {
+		return hostFeishu
 	}
 
-	if isStaging {
-		return "https://open.feishu-staging.cn"
-	}
-	return "https://open.feishu.cn"
+	return hostLark
 }

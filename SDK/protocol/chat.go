@@ -4,9 +4,13 @@
 
 package protocol
 
-type GetGroupListRequest struct {
-	PageSize  int    `json:"page_size"` // default=100, max=200
-	PageToken string `json:"page_token"`
+import "fmt"
+
+func GenGetGroupListRequest(pageSize int, pageToken string) map[string]string {
+	return map[string]string{
+		"page_size":  fmt.Sprintf("%d", pageSize),
+		"page_token": pageToken,
+	}
 }
 
 type GetGroupListResponse struct {
@@ -27,8 +31,10 @@ type Group struct {
 	OwnerUserID string `json:"owner_user_id"`
 }
 
-type GetGroupInfoRequest struct {
-	ChatID string `json:"chat_id"`
+func GenGetGroupInfoRequest(chatID string) map[string]string {
+	return map[string]string{
+		"chat_id": chatID,
+	}
 }
 
 type GetGroupInfoResponse struct {

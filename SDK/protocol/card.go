@@ -30,15 +30,15 @@ type CardChallenge struct {
 
 type CardCallbackBase struct {
 	OpenID        string  `json:"open_id,omitempty" validate:"omitempty"`
-	EmployeeID    *string `json:"employee_id,omitempty" validate:"omitempty"`
+	UserID        string  `json:"user_id,omitempty" validate:"omitempty"`
 	OpenMessageID string  `json:"open_message_id,omitempty" validate:"omitempty"`
 	TenantKey     string  `json:"tenant_key,omitempty" validate:"omitempty"`
+	Token         *string `json:"token,omitempty" validate:"omitempty"`
 }
 
 type CardCallbackForm struct {
 	CardCallbackBase
 	Action CardCallBackAction `json:"action,omitempty" validate:"omitempty"`
-	AppID  string             `json:"appid,omitempty" validate:"omitempty"`
 }
 
 type CardCallBackAction struct {

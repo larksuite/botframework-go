@@ -10,10 +10,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jinzhu/configor"
 	"github.com/larksuite/botframework-go/SDK/common"
 	"github.com/larksuite/botframework-go/SDK/protocol"
 	"github.com/larksuite/botframework-go/generatecode"
-	"github.com/jinzhu/configor"
 )
 
 var (
@@ -38,7 +38,7 @@ func main() {
 		return
 	}
 
-	common.InitLogger(common.DefaultOption())
+	common.InitLogger(common.NewCommonLogger(), common.DefaultOption())
 	defer common.FlushLogger()
 	ctx := context.Background()
 
@@ -103,7 +103,7 @@ func GenCodeGin(ctx context.Context, config *generatecode.GenCodeInfo) {
 		return
 	}
 
-	// generatecode handler
+	// generatecode handler_event
 	eventTpl := &generatecode.EventTemplate{}
 	for _, v := range config.EventList {
 		if v.EventName == "AppTicket" {
@@ -131,19 +131,19 @@ func GenCodeGin(ctx context.Context, config *generatecode.GenCodeInfo) {
 		eventTpl.AddCardAction(v.MethodName)
 	}
 
-	err = generatecode.GenerateCode(ctx, "tplregist", generatecode.TplRegist, path, "/handler/regist.go", eventTpl, true)
+	err = generatecode.GenerateCode(ctx, "tplregist", generatecode.TplRegist, path, "/handler_event/regist.go", eventTpl, true)
 	if err != nil {
 		common.Logger(ctx).Errorf("generateCodeError[%v]", err)
 		return
 	}
 
-	err = generatecode.GenerateCode(ctx, "tplevent", generatecode.TplEvent, path, "/handler/event.go", eventTpl, false)
+	err = generatecode.GenerateCode(ctx, "tplevent", generatecode.TplEvent, path, "/handler_event/event.go", eventTpl, false)
 	if err != nil {
 		common.Logger(ctx).Errorf("generateCodeError[%v]", err)
 		return
 	}
 
-	err = generatecode.GenerateCode(ctx, "tplCard", generatecode.TplCard, path, "/handler/card.go", eventTpl, false)
+	err = generatecode.GenerateCode(ctx, "tplCard", generatecode.TplCard, path, "/handler_event/card.go", eventTpl, false)
 	if err != nil {
 		common.Logger(ctx).Errorf("generateCodeError[%v]", err)
 		return

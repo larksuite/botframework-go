@@ -4,7 +4,7 @@
 
 package generatecode
 
-var TplEvent = `package handler
+var TplEvent = `package handler_event
 
 import (
 	"context"

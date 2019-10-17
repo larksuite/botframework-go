@@ -103,6 +103,39 @@ func SendCardMessage(ctx context.Context, tenantKey, appID string,
 	return sendCardMsg(ctx, tenantKey, appID, protocol.NewCardMsgReq(user, rootID, card, updateMulti))
 }
 
+// UpdateCard: update card
+func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card protocol.CardForm) (*protocol.UpdateCardResponse, error) {
+	// check params
+	if tenantKey == "" || appID == "" || token == "" {
+		return nil, common.ErrCardUpdateParams.ErrorWithExtStr("param is empty or is nil")
+	}
+
+	accessToken, err := auth.GetTenantAccessToken(ctx, tenantKey, appID)
+	if err != nil {
+		return nil, err
+	}
+
+	request := &protocol.UpdateCardRequest{
+		Token: token,
+		Card:  card,
+	}
+
+	rspBytes, err := common.DoHttpPostOApi(protocol.CardUpdatePath, common.NewHeaderToken(accessToken), request)
+	if err != nil {
+		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
+	}
+
+	rspData := &protocol.UpdateCardResponse{}
+	err = json.Unmarshal(rspBytes, &rspData)
+	if err != nil {
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+	}
+	if rspData.Code != 0 {
+		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+	}
+	return rspData, nil
+}
+
 // SendTextMessageBatch: batch send text message
 // @param  ctx: context
 // @param  tenantKey: tenant key. If you don't know it, ask your tenant administrator

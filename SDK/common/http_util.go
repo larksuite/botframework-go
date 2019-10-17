@@ -87,3 +87,9 @@ func NewHeaderToken(accessToken string) map[string]string {
 	header["Content-Type"] = "application/json"
 	return header
 }
+
+func NewHeaderJson() map[string]string {
+	header := make(map[string]string)
+	header["Content-Type"] = "application/json"
+	return header
+}

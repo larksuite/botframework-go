@@ -3,7 +3,7 @@ ServiceInfo:
   GenCodePath:  # Code generation absolute path. If it is empty, the configuration item named "Path" will be used.
   EventWebhook: /webhook/event
   CardWebhook: /webhook/card
-  AppID: cli_9de0ff6df7bc910c # your app id
+  AppID: cli_9d1ad8ed77f69108 # your app id
   Description: test_demo      # your app description
   IsISVApp: false             # ISV App flag, false is default
 EventList:

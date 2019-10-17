@@ -69,7 +69,7 @@ func InitPath(path string) error {
 		}
 	}
 
-	path = path + "/handler"
+	path = path + "/handler_event"
 	isExist, err = fileExists(path)
 	if err != nil {
 		return fmt.Errorf("checkPathExistError path[%s]error[%v]\n", path, err)

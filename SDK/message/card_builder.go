@@ -7,16 +7,17 @@ package message
 import (
 	"encoding/json"
 
-	"github.com/larksuite/botframework-go/SDK/protocol"
 	"github.com/google/uuid"
+	"github.com/larksuite/botframework-go/SDK/protocol"
 )
 
 type CardBuilder struct {
 	blocks        []interface{} // block list: DIVBlock/HRBlock/ImageBlock/ActionBlock/NoteBlock
-	currentLocale string
 	i18nBlocks    map[string][]interface{}
+	currentLocale string
 	Header        *protocol.CardHeaderForm
 	Conf          *protocol.ConfigForm
+	OpenIDs       []string
 	Session       *string
 }
 
@@ -34,6 +35,12 @@ func (builder *CardBuilder) SwitchLocale(locale protocol.Language) *CardBuilder 
 func (builder *CardBuilder) SetConfig(config protocol.ConfigForm) *CardBuilder {
 	builder.Conf = &config
 
+	return builder
+}
+
+// set updating user group
+func (builder *CardBuilder) SetUpdatingUserGroup(users []string) *CardBuilder {
+	builder.OpenIDs = users
 	return builder
 }
 
@@ -167,6 +174,7 @@ func (builder *CardBuilder) BuildForm() (card *protocol.CardForm, err error) {
 	card.I18NElements = builder.i18nBlocks
 	card.Header = builder.Header
 	card.Config = builder.Conf
+	card.OpenIDs = builder.OpenIDs
 
 	return
 }

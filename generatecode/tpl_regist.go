@@ -4,7 +4,7 @@
 
 package generatecode
 
-var TplRegist = `package handler
+var TplRegist = `package handler_event
 
 import (
 	"github.com/larksuite/botframework-go/SDK/event"

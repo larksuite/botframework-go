@@ -4,7 +4,7 @@
 
 package generatecode
 
-var TplCard = `package handler
+var TplCard = `package handler_event
 
 import (
 	"context"

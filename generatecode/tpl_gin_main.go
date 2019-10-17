@@ -15,13 +15,13 @@ import (
 	"github.com/larksuite/botframework-go/SDK/auth"
 	"github.com/larksuite/botframework-go/SDK/common"
 	"github.com/larksuite/botframework-go/SDK/protocol"
-	"{{.Path}}/handler"
+	"{{.Path}}/handler_event"
 )
 
 func main() {
 	r := gin.Default()
 
-	common.InitLogger(common.DefaultOption())
+	common.InitLogger(common.NewCommonLogger(), common.DefaultOption())
 	defer common.FlushLogger()
 
 	err := InitInfo()
@@ -58,37 +58,17 @@ func InitInfo() error {
 	// ISVApp Set TicketManager
 	if conf.AppType == protocol.ISVApp {
 		// ISVApp need to implement the TicketManager interface
-		// it is recommended to set/get your app-ticket in redis
-		// defaultManager set/get your app-ticket in-process, app-ticket will be lost when service is restarted
-		err := auth.InitISVAppTicketManager(&defaultManager{})
+		// It is recommended to set/get your app-ticket in redis
+		// Default Redis AppTicket Manager: auth.NewDefaultRedisAppTicketManager, need run redis-server
+		err := auth.InitISVAppTicketManager(auth.NewDefaultRedisAppTicketManager(map[string]string{"addr": "127.0.0.1:6379"}))
 		if err != nil {
 			return fmt.Errorf("Authorization Initialize Error[%v]", err)
 		}
 	}
 
 	// regist handler
-	handler.RegistHandler(conf.AppID)
+	handler_event.RegistHandler(conf.AppID)
 
 	return nil
-}
-
-// defaultManager set/get your app-ticket in-process, app-ticket will be lost when service is restarted
-type defaultManager struct {
-	appTicketMap map[string]string
-}
-
-func (dsc *defaultManager) SetAppTicket(appID, appTicket string) error {
-	if dsc.appTicketMap == nil {
-		dsc.appTicketMap = make(map[string]string)
-	}
-	dsc.appTicketMap[appID] = appTicket
-	return nil
-}
-
-func (dsc *defaultManager) GetAppTicket(appID string) (string, error) {
-	if appTicket, ok := dsc.appTicketMap[appID]; ok {
-		return appTicket, nil
-	}
-	return "", common.ErrAppTicketNotFound.Error()
 }
 `

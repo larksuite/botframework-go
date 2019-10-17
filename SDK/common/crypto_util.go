@@ -16,8 +16,8 @@ import (
 	"reflect"
 )
 
-// EncryptDESCBCBase64 AES CBC base64URLEncoding
-func EncryptDESCBCBase64(originalData string, key string) (string, error) {
+// EncryptAESCBCBase64 AES CBC base64URLEncoding
+func EncryptAESCBCBase64(originalData string, key string) (string, error) {
 	hashKey := getHashKey(key)
 	data := []byte(originalData)
 	block, err := aes.NewCipher(hashKey)
@@ -32,8 +32,8 @@ func EncryptDESCBCBase64(originalData string, key string) (string, error) {
 	return base64.URLEncoding.EncodeToString(crypted), nil
 }
 
-// DecryptDESCBCBase64 AES CBC base64URLEncoding
-func DecryptDESCBCBase64(encryptedData string, key string) (string, error) {
+// DecryptAESCBCBase64 AES CBC base64URLEncoding
+func DecryptAESCBCBase64(encryptedData string, key string) (string, error) {
 	hashKey := getHashKey(key)
 	crypted, err := base64.URLEncoding.DecodeString(encryptedData)
 	if err != nil {
@@ -53,26 +53,26 @@ func DecryptDESCBCBase64(encryptedData string, key string) (string, error) {
 	return string(originalData), nil
 }
 
-// EncryptDes des encrypt
-func EncryptDes(original interface{}, key string) (string, error) {
+// EncryptAes aes encrypt
+func EncryptAes(original interface{}, key string) (string, error) {
 	bEncrypt, err := json.Marshal(original)
 	if err != nil {
 		return "", fmt.Errorf("original Marshal failed. err:%v", err)
 	}
 
-	return EncryptDESCBCBase64(string(bEncrypt), key)
+	return EncryptAESCBCBase64(string(bEncrypt), key)
 }
 
-// DecyptDes des decypt
-func DecyptDes(encryptedData string, key string, original interface{}) error {
+// DecryptAes aes decypt
+func DecryptAes(encryptedData string, key string, original interface{}) error {
 	rv := reflect.ValueOf(original)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return errors.New("original isnot Ptr, or is nil")
 	}
 
-	originalData, err := DecryptDESCBCBase64(encryptedData, key)
+	originalData, err := DecryptAESCBCBase64(encryptedData, key)
 	if err != nil {
-		return fmt.Errorf("des decypt failed. err:%v", err)
+		return fmt.Errorf("aes decypt failed. err:%v", err)
 	}
 
 	err = json.Unmarshal([]byte(originalData), &original)
