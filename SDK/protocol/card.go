@@ -34,6 +34,7 @@ type CardCallbackBase struct {
 	OpenMessageID string  `json:"open_message_id,omitempty" validate:"omitempty"`
 	TenantKey     string  `json:"tenant_key,omitempty" validate:"omitempty"`
 	Token         *string `json:"token,omitempty" validate:"omitempty"`
+	Timezone      *string `json:"timezone,omitempty" validate:"omitempty"`
 }
 
 type CardCallbackForm struct {
@@ -42,7 +43,8 @@ type CardCallbackForm struct {
 }
 
 type CardCallBackAction struct {
-	Value  map[string]string `json:"value,omitempty" validate:"omitempty"`
-	Tag    *string           `json:"tag,omitempty" validate:"omitempty"`
-	Option *string           `json:"option,omitempty" validate:"omitempty"`
+	Value    map[string]string `json:"value,omitempty" validate:"omitempty"`
+	Tag      *string           `json:"tag,omitempty" validate:"omitempty"`
+	Option   *string           `json:"option,omitempty" validate:"omitempty"`
+	Timezone *string           `json:"timezone,omitempty" validate:"omitempty"`
 }

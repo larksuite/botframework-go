@@ -11,12 +11,14 @@ import (
 
 // card element
 const (
-	IMG_E           = "img"
-	BUTTON_E        = "button"
-	SELECT_STATIC_E = "select_static"
-	SELECT_PERSON_E = "select_person"
-	OVERFLOW_E      = "overflow"
-	DATEPICKER_E    = "date_picker"
+	IMG_E            = "img"
+	BUTTON_E         = "button"
+	SELECT_STATIC_E  = "select_static"
+	SELECT_PERSON_E  = "select_person"
+	OVERFLOW_E       = "overflow"
+	PICKERDATE_E     = "picker_date"
+	PICKERTIME_E     = "picker_time"
+	PICKERDATETIME_E = "picker_datetime"
 
 	PLAIN_TEXT_E = "plain_text"
 	LARK_MD_E    = "lark_md"
@@ -57,7 +59,6 @@ type ActionElement interface {
 	BaseElement
 	SetAction(method string, meta Meta)
 	SetSession(session string)
-	WrapSidebarURL(session string)
 }
 
 type URLForm struct {
@@ -90,14 +91,13 @@ func (form *ImageForm) GetTag() string {
 }
 
 type ButtonForm struct {
-	Tag         string            `json:"tag,omitempty" validate:"omitempty"`
-	Text        TextForm          `json:"text,omitempty" validate:"omitempty"`
-	URL         *string           `json:"url,omitempty" validate:"omitempty"`
-	MultiURL    *URLForm          `json:"multi_url,omitempty" validate:"omitempty"`
-	Params      map[string]string `json:"value,omitempty" validate:"omitempty"`
-	Type        string            `json:"type,omitempty" validate:"omitempty"`
-	Confirm     *ConfirmForm      `json:"confirm,omitempty" validate:"omitempty"`
-	CallSideBar bool              `json:"-"`
+	Tag      string            `json:"tag,omitempty" validate:"omitempty"`
+	Text     TextForm          `json:"text,omitempty" validate:"omitempty"`
+	URL      *string           `json:"url,omitempty" validate:"omitempty"`
+	MultiURL *URLForm          `json:"multi_url,omitempty" validate:"omitempty"`
+	Params   map[string]string `json:"value,omitempty" validate:"omitempty"`
+	Type     string            `json:"type,omitempty" validate:"omitempty"`
+	Confirm  *ConfirmForm      `json:"confirm,omitempty" validate:"omitempty"`
 }
 
 func (form *ButtonForm) GetTag() string {
@@ -120,39 +120,10 @@ func (form *ButtonForm) SetSession(session string) {
 	form.Params["sid"] = session
 }
 
-func (form *ButtonForm) CallSidebar() bool {
-	return form.CallSideBar
-}
-
-func (form *ButtonForm) WrapSidebarURL(session string) {
-	if form.CallSideBar {
-		if form.URL != nil {
-			wrappedURL, _ := wrapSidebarURL(*form.URL, session)
-			form.URL = &wrappedURL
-		}
-
-		if form.MultiURL != nil && form.MultiURL.PCUrl != nil {
-			wrappedURL, _ := wrapSidebarURL(*form.MultiURL.PCUrl, session)
-			form.MultiURL.PCUrl = &wrappedURL
-		}
-
-		if form.MultiURL != nil && form.MultiURL.AndroidUrl != nil {
-			wrappedURL, _ := wrapH5URL(*form.MultiURL.AndroidUrl, session)
-			form.MultiURL.AndroidUrl = &wrappedURL
-		}
-
-		if form.MultiURL != nil && form.MultiURL.IOSUrl != nil {
-			wrappedURL, _ := wrapH5URL(*form.MultiURL.IOSUrl, session)
-			form.MultiURL.IOSUrl = &wrappedURL
-		}
-	}
-}
-
 // select menu
 type OptionForm struct {
 	Text     TextForm `json:"text,omitempty" validate:"omitempty"`
 	Value    string   `json:"value,omitempty" validate:"omitempty"`
-	Default  bool     `json:"default,omitempty" validate:"omitempty"`
 	URL      *string  `json:"url,omitempty" validate:"omitempty"`
 	MultiURL *URLForm `json:"multi_url,omitempty" validate:"omitempty"`
 }
@@ -187,12 +158,8 @@ func (form *SelectorForm) SetSession(session string) {
 	form.Params["sid"] = session
 }
 
-func (form *SelectorForm) WrapSidebarURL(session string) {
-	return
-}
-
-// date picker
-type DatePickerForm struct {
+// Picker Date
+type PickerDateForm struct {
 	Tag         string            `json:"tag,omitempty" validate:"omitempty"`
 	Placeholder *TextForm         `json:"placeholder,omitempty" validate:"omitempty"`
 	Params      map[string]string `json:"value,omitempty" validate:"omitempty"`
@@ -200,11 +167,11 @@ type DatePickerForm struct {
 	InitialDate *string           `json:"initial_date,omitempty" validate:"omitempty"`
 }
 
-func (form *DatePickerForm) GetTag() string {
+func (form *PickerDateForm) GetTag() string {
 	return form.Tag
 }
 
-func (form *DatePickerForm) SetAction(method string, meta Meta) {
+func (form *PickerDateForm) SetAction(method string, meta Meta) {
 	if form.Params == nil {
 		form.Params = make(map[string]string, 0)
 	}
@@ -213,15 +180,69 @@ func (form *DatePickerForm) SetAction(method string, meta Meta) {
 	form.Params["meta"] = string(data)
 }
 
-func (form *DatePickerForm) SetSession(session string) {
+func (form *PickerDateForm) SetSession(session string) {
 	if form.Params == nil {
 		form.Params = make(map[string]string, 0)
 	}
 	form.Params["sid"] = session
 }
 
-func (form *DatePickerForm) WrapSidebarURL(session string) {
+// Picker Time
+type PickerTimeForm struct {
+	Tag         string            `json:"tag,omitempty" validate:"omitempty"`
+	Placeholder *TextForm         `json:"placeholder,omitempty" validate:"omitempty"`
+	Params      map[string]string `json:"value,omitempty" validate:"omitempty"`
+	Confirm     *ConfirmForm      `json:"confirm,omitempty" validate:"omitempty"`
+	InitialTime *string           `json:"initial_time,omitempty" validate:"omitempty"`
+}
 
+func (form *PickerTimeForm) GetTag() string {
+	return form.Tag
+}
+
+func (form *PickerTimeForm) SetAction(method string, meta Meta) {
+	if form.Params == nil {
+		form.Params = make(map[string]string, 0)
+	}
+	form.Params["method"] = method
+	data, _ := json.Marshal(meta)
+	form.Params["meta"] = string(data)
+}
+
+func (form *PickerTimeForm) SetSession(session string) {
+	if form.Params == nil {
+		form.Params = make(map[string]string, 0)
+	}
+	form.Params["sid"] = session
+}
+
+// PickerDatetime控件
+type PickerDatetimeForm struct {
+	Tag             string            `json:"tag,omitempty" validate:"omitempty"`
+	Placeholder     *TextForm         `json:"placeholder,omitempty" validate:"omitempty"`
+	Params          map[string]string `json:"value,omitempty" validate:"omitempty"`
+	Confirm         *ConfirmForm      `json:"confirm,omitempty" validate:"omitempty"`
+	InitialDatetime *string           `json:"initial_datetime,omitempty" validate:"omitempty"`
+}
+
+func (form *PickerDatetimeForm) GetTag() string {
+	return form.Tag
+}
+
+func (form *PickerDatetimeForm) SetAction(method string, meta Meta) {
+	if form.Params == nil {
+		form.Params = make(map[string]string, 0)
+	}
+	form.Params["method"] = method
+	data, _ := json.Marshal(meta)
+	form.Params["meta"] = string(data)
+}
+
+func (form *PickerDatetimeForm) SetSession(session string) {
+	if form.Params == nil {
+		form.Params = make(map[string]string, 0)
+	}
+	form.Params["sid"] = session
 }
 
 // overflow
@@ -252,10 +273,6 @@ func (form *OverflowForm) SetSession(session string) {
 	form.Params["sid"] = session
 }
 
-func (form *OverflowForm) WrapSidebarURL(session string) {
-
-}
-
 // Field
 type FieldForm struct {
 	Short bool     `json:"is_short,omitempty" validate:"omitempty"`
@@ -268,22 +285,6 @@ type ConfirmForm struct {
 	Text    TextForm `json:"text,omitempty" validate:"omitempty"`
 	Confirm TextForm `json:"confirm,omitempty" validate:"omitempty"`
 	Deny    TextForm `json:"deny,omitempty" validate:"omitempty"`
-}
-
-func wrapSidebarURL(rawURL string, session string) (string, error) {
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return rawURL, err
-	}
-
-	q, err := url.ParseQuery(u.RawQuery)
-	if err != nil {
-		return rawURL, err
-	}
-	q.Add("sid", session)
-
-	u.RawQuery = q.Encode()
-	return "lark://im.message-sidebar.com?key=webview&url=" + url.QueryEscape(u.String()), nil
 }
 
 func wrapH5URL(rawURL string, session string) (string, error) {
@@ -361,4 +362,9 @@ type CardForm struct {
 	Header       *CardHeaderForm          `json:"header,omitempty" validate:"omitempty"`
 	Elements     []interface{}            `json:"elements,omitempty" validate:"omitempty"`
 	I18NElements map[string][]interface{} `json:"i18n_elements,omitempty" validate:"omitempty"`
+}
+
+type ToastTips struct {
+	Content string            `json:"content,omitempty" validate:"omitempty"`
+	I18N    map[string]string `json:"i18n,omitempty" validate:"omitempty"`
 }

@@ -15,6 +15,7 @@ import (
 func TestGetChatInfo(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
+
 	appconfig.Init(*appConf)
 	resp, err := chat.GetChatInfo(c, tenantKey, appConf.AppID, chatID)
 	if err != nil {
@@ -27,6 +28,7 @@ func TestGetChatInfo(t *testing.T) {
 func TestGetChatList(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
+
 	appconfig.Init(*appConf)
 	resp, err := chat.GetChatList(ctx, tenantKey, appConf.AppID, 100, "")
 	if err != nil {

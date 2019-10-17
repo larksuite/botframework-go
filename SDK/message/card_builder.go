@@ -72,7 +72,6 @@ func (builder *CardBuilder) AddDIVBlock(text *protocol.TextForm, field []protoco
 	if act, ok := extra.(protocol.ActionElement); ok {
 		div.Extra = act
 		act.SetSession(*builder.Session)
-		act.WrapSidebarURL(*builder.Session)
 	} else if base, ok := extra.(protocol.BaseElement); ok {
 		div.Extra = base
 	}
@@ -127,7 +126,6 @@ func (builder *CardBuilder) AddActionBlock(actions []protocol.ActionElement) *Ca
 	act.Tag = protocol.ACTION_BLOCK
 	for _, a := range actions {
 		a.SetSession(*builder.Session)
-		a.WrapSidebarURL(*builder.Session)
 	}
 	act.Actions = actions
 
@@ -258,21 +256,6 @@ func NewActionButton(text *protocol.TextForm, params map[string]string,
 	return form
 }
 
-// new element button
-func NewSideBarButton(text *protocol.TextForm, sidebarURL *string, multiURL *protocol.URLForm,
-	category protocol.ButtonStyle) *protocol.ButtonForm {
-
-	form := &protocol.ButtonForm{}
-	form.Tag = protocol.BUTTON_E
-	form.Text = *text
-	form.URL = sidebarURL
-	form.MultiURL = multiURL
-	form.Type = category.String()
-	form.CallSideBar = true
-
-	return form
-}
-
 func NewOption(text protocol.TextForm, value string) protocol.OptionForm {
 	form := protocol.OptionForm{}
 	form.Text = text
@@ -320,18 +303,44 @@ func NewSelectPersonMenu(placeHolder *protocol.TextForm, params map[string]strin
 	return form
 }
 
-// new element date_picker
-func NewDatepicker(placeHolder *protocol.TextForm, params map[string]string,
-	confirm *protocol.ConfirmForm, initialDate *string, method string) *protocol.DatePickerForm {
+// new element picker date
+func NewPickerDate(placeHolder *protocol.TextForm, params map[string]string,
+	confirm *protocol.ConfirmForm, initialDate *string, method string) *protocol.PickerDateForm {
 
-	form := &protocol.DatePickerForm{}
-	form.Tag = protocol.DATEPICKER_E
+	form := &protocol.PickerDateForm{}
+	form.Tag = protocol.PICKERDATE_E
 	form.Placeholder = placeHolder
 	form.Params = params
 	form.Confirm = confirm
 	form.InitialDate = initialDate
 	form.SetAction(method, *protocol.NewMeta())
 
+	return form
+}
+
+// new element picker time
+func NewPickerTime(placeHolder *protocol.TextForm, params map[string]string,
+	confirm *protocol.ConfirmForm, initialTime *string, method string) *protocol.PickerTimeForm {
+	form := &protocol.PickerTimeForm{}
+	form.Tag = protocol.PICKERTIME_E
+	form.Placeholder = placeHolder
+	form.Params = params
+	form.Confirm = confirm
+	form.InitialTime = initialTime
+	form.SetAction(method, *protocol.NewMeta())
+	return form
+}
+
+// new element picker datetime
+func NewPickerDatetime(placeHolder *protocol.TextForm, params map[string]string,
+	confirm *protocol.ConfirmForm, initialDatetime *string, method string) *protocol.PickerDatetimeForm {
+	form := &protocol.PickerDatetimeForm{}
+	form.Tag = protocol.PICKERTIME_E
+	form.Placeholder = placeHolder
+	form.Params = params
+	form.InitialDatetime = initialDatetime
+	form.Confirm = confirm
+	form.SetAction(method, *protocol.NewMeta())
 	return form
 }
 

@@ -12,9 +12,10 @@ import (
 	"github.com/larksuite/botframework-go/SDK/protocol"
 )
 
-func TestAsyncButton(t *testing.T) {
+func TestCardAsyncButton(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
 	content := "Please choose color"
@@ -47,10 +48,12 @@ func TestAsyncButton(t *testing.T) {
 			nil, nil, payload2, protocol.PRIMARY, nil, "asyncButton"),
 	})
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestAsyncButton failed:%v\n", err)
@@ -59,9 +62,10 @@ func TestAsyncButton(t *testing.T) {
 	}
 }
 
-func TestSyncButton(t *testing.T) {
+func TestCardSyncButton(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
 	content := "Please choose color"
@@ -95,10 +99,12 @@ func TestSyncButton(t *testing.T) {
 			nil, nil, payload2, protocol.DANGER, nil, "syncButton"),
 	})
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestSyncButton failed:%v\n", err)
@@ -107,9 +113,10 @@ func TestSyncButton(t *testing.T) {
 	}
 }
 
-func TestJumpButton(t *testing.T) {
+func TestCardJumpButton(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
 	content := "Jump demo"
@@ -132,10 +139,12 @@ func TestJumpButton(t *testing.T) {
 	ext := message.NewJumpButton(message.NewMDText("jump to google", nil, nil, nil), &url, nil, protocol.DEFAULT)
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, ext)
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestJumpButton failed:%v\n", err)
@@ -144,12 +153,13 @@ func TestJumpButton(t *testing.T) {
 	}
 }
 
-func TestImageButton(t *testing.T) {
+func TestCardImage(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
-	content := "imageButton demo"
+	content := "cardImage demo"
 	line := 1
 	title := protocol.TextForm{
 		Tag:     protocol.PLAIN_TEXT_E,
@@ -172,59 +182,24 @@ func TestImageButton(t *testing.T) {
 	builder.AddHRBlock()
 
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
-		t.Errorf("TestImageButton failed:%v\n", err)
+		t.Errorf("TestImage failed:%v\n", err)
 	} else {
 		t.Logf("code:%d ,msg: %s ,openMessageID: %s\n", resp.Code, resp.Msg, resp.Data.MessageID)
 	}
 }
 
-func TestSliderButton(t *testing.T) {
+func TestCardSelectStaticMenu(t *testing.T) {
 	ctx := context.Background()
 	InitTestParams()
-	builder := &message.CardBuilder{}
-	//add header
-	content := "sliderButton demo"
-	line := 1
-	title := protocol.TextForm{
-		Tag:     protocol.PLAIN_TEXT_E,
-		Content: &content,
-		Lines:   &line,
-	}
-	builder.AddHeader(title, "")
-	builder.AddHRBlock()
-	//add config
-	config := protocol.ConfigForm{
-		MinVersion:     protocol.VersionForm{},
-		WideScreenMode: true,
-	}
-	builder.SetConfig(config)
-	//add block
-	testURL := "https://bytedance.com"
-	sidebar := message.NewSideBarButton(message.NewMDText("sidebar", nil, nil, nil),
-		&testURL, nil, protocol.DEFAULT)
-	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, sidebar)
-	builder.AddHRBlock()
-	card, err := builder.BuildForm()
-	user := &protocol.UserInfo{
-		ID:   openID,
-		Type: protocol.UserTypeOpenID,
-	}
-	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
-	if err != nil {
-		t.Errorf("TestSliderButton failed:%v\n", err)
-	} else {
-		t.Logf("code:%d ,msg: %s ,openMessageID: %s\n", resp.Code, resp.Msg, resp.Data.MessageID)
-	}
-}
 
-func TestSelectStaticMenu(t *testing.T) {
-	ctx := context.Background()
 	builder := &message.CardBuilder{}
 	//add header
 	content := "selectStaticMenu demo"
@@ -257,10 +232,12 @@ func TestSelectStaticMenu(t *testing.T) {
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, menu)
 	builder.AddHRBlock()
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestSelectStaticMenu failed:%v\n", err)
@@ -269,8 +246,10 @@ func TestSelectStaticMenu(t *testing.T) {
 	}
 }
 
-func TestSelectPersonMenu(t *testing.T) {
+func TestCardSelectPersonMenu(t *testing.T) {
 	ctx := context.Background()
+	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
 	content := "selectPersonMenu demo"
@@ -296,10 +275,12 @@ func TestSelectPersonMenu(t *testing.T) {
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, menu)
 	builder.AddHRBlock()
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestSelectPersonMenu failed:%v\n", err)
@@ -308,8 +289,10 @@ func TestSelectPersonMenu(t *testing.T) {
 	}
 }
 
-func TestOverFlowMenu(t *testing.T) {
+func TestCardOverFlowMenu(t *testing.T) {
 	ctx := context.Background()
+	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
 	content := "overFlowMenu demo"
@@ -340,10 +323,12 @@ func TestOverFlowMenu(t *testing.T) {
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, menu)
 	builder.AddHRBlock()
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
 		t.Errorf("TestOverFlowMenu failed:%v\n", err)
@@ -352,11 +337,13 @@ func TestOverFlowMenu(t *testing.T) {
 	}
 }
 
-func TestDatePicker(t *testing.T) {
+func TestCardDatePicker(t *testing.T) {
 	ctx := context.Background()
+	InitTestParams()
+
 	builder := &message.CardBuilder{}
 	//add header
-	content := "datePicker demo"
+	content := "PickerDate demo"
 	line := 1
 	title := protocol.TextForm{
 		Tag:     protocol.PLAIN_TEXT_E,
@@ -374,18 +361,20 @@ func TestDatePicker(t *testing.T) {
 	//add block
 	params := map[string]string{}
 	initialDate := "2019-9-1"
-	menu := message.NewDatepicker(message.NewMDText("default", nil, nil, nil),
-		params, nil, &initialDate, "datePicker")
+	menu := message.NewPickerDate(message.NewMDText("default", nil, nil, nil),
+		params, nil, &initialDate, "PickerDate")
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, menu)
 	builder.AddHRBlock()
 	card, err := builder.BuildForm()
+
 	user := &protocol.UserInfo{
 		ID:   openID,
 		Type: protocol.UserTypeOpenID,
 	}
+
 	resp, err := message.SendCardMessage(ctx, tenantKey, appConf.AppID, user, "", *card, false)
 	if err != nil {
-		t.Errorf("TestDatePicker failed:%v\n", err)
+		t.Errorf("TestPickerDate failed:%v\n", err)
 	} else {
 		t.Logf("code:%d ,msg: %s ,openMessageID: %s\n", resp.Code, resp.Msg, resp.Data.MessageID)
 	}
