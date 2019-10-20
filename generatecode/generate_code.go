@@ -25,16 +25,16 @@ func GenerateCode(ctx context.Context, tplName, tplStr, path, file string, tpl i
 
 	if !isForceUpdate {
 		if isExist {
-			common.Logger(ctx).Infof("file[.%s] fileIsExist, do nothing", file)
+			common.Logger(ctx).Infof("file[$path%-24s]: exist", file)
 			return nil
 		} else {
-			common.Logger(ctx).Infof("file[.%s] will create", file)
+			common.Logger(ctx).Infof("file[$path%-24s]: create", file)
 		}
 	} else { // Force Update
 		if isExist {
-			common.Logger(ctx).Infof("file[.%s] will force update", file)
+			common.Logger(ctx).Infof("file[$path%-24s]: force update", file)
 		} else {
-			common.Logger(ctx).Infof("file[.%s] will create", file)
+			common.Logger(ctx).Infof("file[$path%-24s]: create", file)
 		}
 	}
 

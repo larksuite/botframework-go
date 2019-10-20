@@ -34,6 +34,7 @@ var (
 	logger LogInterface
 )
 
+// default demo: common.InitLogger(common.NewCommonLogger(), common.DefaultOption())
 func InitLogger(log LogInterface, option interface{}) {
 	logger = log
 	logger.Init(option)

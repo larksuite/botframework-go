@@ -32,7 +32,7 @@ func InitTestParams() {
 			EncryptKey:  os.Getenv("encryptkey"),
 			AppType:     os.Getenv("apptype"),
 		}
-		// can get from other way like redis
+
 		tenantKey = os.Getenv("tenantkey")
 		chatID = os.Getenv("chatid")
 		openID = os.Getenv("openid")

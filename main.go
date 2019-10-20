@@ -89,7 +89,7 @@ func GenCodeGin(ctx context.Context, config *generatecode.GenCodeInfo) {
 		return
 	}
 
-	common.Logger(ctx).Infof("generate Gin code in path[%s]", path)
+	common.Logger(ctx).Infof("path=%s", path)
 	// generatecode main、callback
 	err = generatecode.GenerateCode(ctx, "tplmain", generatecode.TplGinMain, path, "/main.go", mainTpl, false)
 	if err != nil {
@@ -149,6 +149,6 @@ func GenCodeGin(ctx context.Context, config *generatecode.GenCodeInfo) {
 		return
 	}
 
-	common.Logger(ctx).Infof("Success generateCodeSucc service in path[%s]", path)
+	common.Logger(ctx).Infof("Success. code in path=%s", path)
 	return
 }

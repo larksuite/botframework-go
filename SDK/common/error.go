@@ -105,4 +105,5 @@ var (
 	ErrMinaSetAuth        = &ErrCodeMsg{Code: 6003, Message: "mini-program set auth-user-info error"}
 	ErrMinaGetAuth        = &ErrCodeMsg{Code: 6004, Message: "mini-program get auth-user-info error"}
 	ErrMinaSessionInvalid = &ErrCodeMsg{Code: 6005, Message: "mini-program session invalid"}
+	ErrLogoutParams       = &ErrCodeMsg{Code: 6006, Message: "authentication-logout  params error"}
 )

@@ -48,9 +48,9 @@ func InitInfo() error {
 		// get appinfo(app_secret、veri_token、encrypt_key) from redis/mysql or remote config system
 		// redis/mysql or remote config system is recommended
 
-		// AppSecret:   redis.GetString("{{.AppID}}" + "AppSecret"),
-		// VerifyToken: redis.GetString("{{.AppID}}" + "VerifyToken"),
-		// EncryptKey:  redis.GetString("{{.AppID}}" + "EncryptKey"),
+		// AppSecret:   redis.Get("{{.AppID}}" + "AppSecret"),
+		// VerifyToken: redis.Get("{{.AppID}}" + "VerifyToken"),
+		// EncryptKey:  redis.Get("{{.AppID}}" + "EncryptKey"),
 	}
 
 	appconfig.Init(conf)
@@ -59,8 +59,14 @@ func InitInfo() error {
 	if conf.AppType == protocol.ISVApp {
 		// ISVApp need to implement the TicketManager interface
 		// It is recommended to set/get your app-ticket in redis
-		// Default Redis AppTicket Manager: auth.NewDefaultRedisAppTicketManager, need run redis-server
-		err := auth.InitISVAppTicketManager(auth.NewDefaultRedisAppTicketManager(map[string]string{"addr": "127.0.0.1:6379"}))
+
+		redisClient := &common.DefaultRedisClient{}
+		err := redisClient.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+		if err != nil {
+			return fmt.Errorf("init redis-client error[%v]", err)
+		}
+
+		err = auth.InitISVAppTicketManager(auth.NewDefaultAppTicketManager(redisClient))
 		if err != nil {
 			return fmt.Errorf("Authorization Initialize Error[%v]", err)
 		}
