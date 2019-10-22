@@ -169,7 +169,7 @@ func GetAppAccessToken(ctx context.Context, appID string) (string, error) {
 			var resultReSend string
 			errReSend := ReSendAppTicket(ctx, appInfo.AppID, appInfo.AppSecret) // donot find appTicket
 			if errReSend != nil {
-				resultReSend = fmt.Sprintf("ReSendAppTicketError[%v]", err)
+				resultReSend = fmt.Sprintf("ReSendAppTicketError[%v]", errReSend)
 			} else {
 				resultReSend = "ReSendAppTicketSucc"
 			}

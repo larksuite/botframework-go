@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis"
 )
 
 // Just for the convenience of implementing the default-session-manager/default-appticket-manager

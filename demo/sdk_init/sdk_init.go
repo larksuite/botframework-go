@@ -48,7 +48,7 @@ func InitInfo() error {
 	return nil
 }
 
-// get appinfo(app_secret、veri_token、encrypt_key) from redis/mysql or remote config system
+// get appinfo(app_id、app_secret、veri_token、encrypt_key) from redis/mysql or remote config system
 // redis/mysql or remote config system is recommended
 func GetAppConf(client common.DBClient) (*appconfig.AppConfig, error) {
 	//Read information from  redis
@@ -70,7 +70,7 @@ func GetAppConf(client common.DBClient) (*appconfig.AppConfig, error) {
 	}
 
 	// Initialize app config
-	// Clear text in code is not recommended. You can get it from redis or environment variables.
+	// Clear text in code is not recommended.
 	conf := &appconfig.AppConfig{
 		AppID:       appID,                //get it from lark-voucher and basic information。
 		AppType:     protocol.InternalApp, //AppType only has two types: Independent Software Vendor App（ISVApp） or Internal App.

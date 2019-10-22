@@ -129,7 +129,7 @@ func sendCard(chatID, tenantKey, appID string) error {
 	value1 := "value1"
 	value2 := "value2"
 	builder.AddActionBlock([]protocol.ActionElement{
-		message.NewSelectStaticMenu(message.NewMDText("SelectPersonMenu", nil, nil, nil), nil, []protocol.OptionForm{
+		message.NewSelectStaticMenu(message.NewMDText("SelectStaticMenu", nil, nil, nil), nil, []protocol.OptionForm{
 			message.NewOption(optiontext1, value1),
 			message.NewOption(optiontext2, value2),
 		}, &value1, nil, "testcard"), //option1 is default option
@@ -159,7 +159,7 @@ func sendCard(chatID, tenantKey, appID string) error {
 	)
 	builder.AddHRBlock()
 
-	//add timepicker
+	//add datapicker
 	timePicker := time.Now().Format("2006-01-02")
 	builder.AddActionBlock([]protocol.ActionElement{
 		message.NewPickerDate(message.NewMDText("dataPicker", nil, nil, nil), nil, nil, &timePicker, "testcard"),
@@ -181,7 +181,7 @@ func sendCard(chatID, tenantKey, appID string) error {
 		ALT: protocol.TextForm{
 			Tag:     protocol.PLAIN_TEXT_E,
 			Content: &noteImageContent,
-			Lines:   &line,
+			Lines:   nil,
 		},
 	}
 	builder.AddNoteBlock([]protocol.BaseElement{
