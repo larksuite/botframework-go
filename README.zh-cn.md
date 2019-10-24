@@ -1,7 +1,7 @@
 # botframework-go
-飞书开放平台应用开发接口 golang 版本 SDK，支持开发者快速搭建和开发飞书应用。
-支持开发基于飞书开放平台的机器人应用、小程序应用。
-支持自动生成 gin 框架代码。
+飞书开放平台应用开发接口 golang 版本 SDK，支持开发者快速搭建和开发飞书应用。  
+支持开发基于飞书开放平台的机器人应用、小程序应用。  
+支持自动生成 gin 框架代码。  
 
 # 支持接口列表
 ## 订阅事件通知
@@ -80,21 +80,23 @@
 
 # SDK 使用说明
 ## 日志初始化
-SDK日志初始化函数 `func InitLogger(log LogInterface, option interface{})`
-SDK提供默认的日志实现和默认的日志参数，通过如下调用使用默认日志实现: `common.InitLogger(common.NewCommonLogger(), common.DefaultOption())`
-开发者可以通过实现`LogInterface`接口，来使用自定义日志库。
+SDK日志初始化函数 `func InitLogger(log LogInterface, option interface{})`  
+
+SDK提供默认的日志实现和默认的日志参数，通过如下调用使用默认日志实现: `common.InitLogger(common.NewCommonLogger(), common.DefaultOption())`  
+
+开发者可以通过实现`LogInterface`接口，来使用自定义日志库。  
 
 ## SDK初始化
-SDK使用前需要执行初始化操作，具体操作步骤：
-1. 获取应用相关配置信息（AppID、AppSecret、VerifyToken、EncryptKey 等），为了数据安全，不建议开发者在代码中明文写入这些信息，您可以选择从数据库读取、远程配置系统、环境变量中获取；
-2. 调用`appconfig.Init(conf)`函数，初始化应用配置；
-3. 如果是 Independent Software Vendor App (ISVApp), 需要实现读取和保存 AppTicket 的接口。框架提供使用redis读取和保存 AppTicket 的接口实现，你也可以实现`TicketManager`接口，来使自定义 AppTicket 的读写方式。
-4. 根据业务逻辑注册事件回调处理函数。
+SDK使用前需要执行初始化操作，具体操作步骤：  
+1. 获取应用相关配置信息（AppID、AppSecret、VerifyToken、EncryptKey 等），为了数据安全，不建议开发者在代码中明文写入这些信息，您可以选择从数据库读取、远程配置系统、环境变量中获取；  
+2. 调用`appconfig.Init(conf)`函数，初始化应用配置；  
+3. 如果是 Independent Software Vendor App (ISVApp), 需要实现读取和保存 AppTicket 的接口。框架提供使用redis读取和保存 AppTicket 的接口实现，你也可以实现`TicketManager`接口，来使自定义 AppTicket 的读写方式;  
+4. 根据业务逻辑注册事件回调处理函数;  
 
 ### 示例代码
-1. 从redis读取配置信息：
+1. 从redis读取配置信息：  
    [示例代码](./demo/sdk_init/sdk_init.go)
-2. 从环境变量读取配置信息：
+2. 从环境变量读取配置信息：  
 ```golang
 conf := &appconfig.AppConfig{
     AppID: os.Getenv("AppID"),//从飞书开放平台-凭证与基础信息中获取
@@ -103,21 +105,21 @@ conf := &appconfig.AppConfig{
     VerifyToken: os.Getenv("VerifyToken"),//从飞书开放平台的事件订阅中获取
     EncryptKey:  os.Getenv("EncryptKey"),//从飞书开放平台的事件订阅中获取
 }
-```
+```  
 
 ## 存储初始化
-SDK存储读写接口`type DBClient interface`。在SDK中，其只要用于： ISV 应用的 app ticket 读写操作；身份认证操作的session数据读写操作；敏感信息如 app secret的读取。
+SDK存储读写接口`type DBClient interface`。在SDK中，其只要用于： ISV 应用的 app ticket 读写操作；身份认证操作的session数据读写操作；敏感信息如 app secret的读取。  
 
-接口提供默认的redis实现`DefaultRedisClient`，使用前需要做初始化操作，初始化示例代码
+接口提供默认的redis实现`DefaultRedisClient`，使用前需要做初始化操作，初始化示例代码  
 ```golang
 redisClient := &common.DefaultRedisClient{}
 err := redisClient.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
 if err != nil {
     return fmt.Errorf("init redis-client error[%v]", err)
 }
-```
+```  
 
-开发者可以通过实现 DBClient 接口，来使用自定义存储。
+开发者可以通过实现 DBClient 接口，来使用自定义存储。  
 
 # 生成 Gin 框架代码
 ## 配置文件示例
@@ -168,7 +170,7 @@ go build
 ```
 
 ## 生成代码规则说明
-- 首次生成代码时，会依据配置文件生成全部代码文件；
-- 之后若修改配置文件（修改代码路径之外的其他选项），在原始的路径上重新生成代码时，只会强制更新`./handler/regist.go`文件，其他文件不会更新，以避免覆盖用户自定义代码。
-- `./handler/regist.go`文件，会被强制更新，用户不应该在该文件中加入自定义代码。
+- 首次生成代码时，会依据配置文件生成全部代码文件；  
+- 之后若修改配置文件（修改代码路径之外的其他选项），在原始的路径上重新生成代码时，只会强制更新`./handler/regist.go`文件，其他文件不会更新，以避免覆盖用户自定义代码。  
+- `./handler/regist.go`文件，会被强制更新，用户不应该在该文件中加入自定义代码。  
 
