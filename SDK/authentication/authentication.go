@@ -11,7 +11,7 @@ import (
 type Authentication interface {
 	Init(manager SessionManager, validPeriod time.Duration)
 
-	Login(ctx context.Context, code string, appInfo *AuthAppInfo, requestHost string) (map[string]*http.Cookie, error)
+	Login(ctx context.Context, code string, appID string, requestHost string) (map[string]*http.Cookie, error)
 	Auth(ctx context.Context, sessionKey string) error
 	Logout(ctx context.Context, appID string, requestHost string) (map[string]*http.Cookie, error)
 
@@ -21,12 +21,9 @@ type Authentication interface {
 
 	// get valid period
 	GetValidPeriod() time.Duration
-}
 
-type AuthAppInfo struct {
-	AppID          string
-	AppSecret      string
-	AppAccessToken string
+	// get session manager
+	GetSessionManager() SessionManager
 }
 
 type CookieDomainLevel int

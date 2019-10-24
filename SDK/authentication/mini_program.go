@@ -13,20 +13,50 @@ import (
 )
 
 // Code Exchange Token
-func MiniProgramLoginValidate(code string, appID string, appSecret string) (*protocol.MiniProgramLoginResponse, error) {
+func MiniProgramValidateByAppToken(code string, appAccessToken string) (*protocol.MiniProgramLoginByAppTokenResponse, error) {
 	// check params
-	if code == "" || appID == "" || appSecret == "" {
-		return nil, common.ErrValidateParams.ErrorWithExtStr("code/appID/appSecret is empty")
+	if code == "" || appAccessToken == "" {
+		return nil, common.ErrValidateParams.ErrorWithExtStr("code/appAccessToken is empty")
 	}
 
-	rspBytes, err := common.DoHttpGetOApi(protocol.MPLoginValidatePath, map[string]string{},
-		protocol.GenMiniProgramLoginRequest(code, appID, appSecret))
+	request := &protocol.MiniProgramLoginByAppTokenRequest{
+		Code: code,
+	}
+
+	rspBytes, err := common.DoHttpPostOApi(protocol.MPValidateByAppTokenPath, common.NewHeaderToken(appAccessToken), request)
 
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
 
-	rspData := &protocol.MiniProgramLoginResponse{}
+	rspData := &protocol.MiniProgramLoginByAppTokenResponse{}
+	err = json.Unmarshal(rspBytes, rspData)
+	if err != nil {
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+	}
+
+	if rspData.Code != 0 {
+		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+	}
+
+	return rspData, nil
+}
+
+// Code Exchange Token
+func MiniProgramValidateByIDSecret(code string, appID string, appSecret string) (*protocol.MiniProgramLoginByIDSecretResponse, error) {
+	// check params
+	if code == "" || appID == "" || appSecret == "" {
+		return nil, common.ErrValidateParams.ErrorWithExtStr("code/appID/appSecret is empty")
+	}
+
+	rspBytes, err := common.DoHttpGetOApi(protocol.MPValidateByIDSecretPath, map[string]string{},
+		protocol.GenMiniProgramLoginByIDSecretRequest(code, appID, appSecret))
+
+	if err != nil {
+		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
+	}
+
+	rspData := &protocol.MiniProgramLoginByIDSecretResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)

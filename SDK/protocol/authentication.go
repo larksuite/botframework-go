@@ -4,7 +4,20 @@
 
 package protocol
 
-func GenMiniProgramLoginRequest(code, appID, appSecret string) map[string]string {
+type MiniProgramLoginByAppTokenRequest struct {
+	Code string `json:"code"`
+}
+
+type MiniProgramLoginByAppTokenResponse struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+
+	Data struct {
+		MiniProgramUserToken
+	} `json:"data"`
+}
+
+func GenMiniProgramLoginByIDSecretRequest(code, appID, appSecret string) map[string]string {
 	return map[string]string{
 		"code":   code,
 		"appid":  appID,
@@ -12,7 +25,7 @@ func GenMiniProgramLoginRequest(code, appID, appSecret string) map[string]string
 	}
 }
 
-type MiniProgramLoginResponse struct {
+type MiniProgramLoginByIDSecretResponse struct {
 	Code int    `json:"error"`
 	Msg  string `json:"message"`
 
@@ -26,8 +39,6 @@ type MiniProgramUserToken struct {
 	RefreshToken string `json:"refresh_token"`
 	TenantKey    string `json:"tenant_key"`
 	OpenID       string `json:"open_id"`
-	EmployeeID   string `json:"employee_id"`
-	UID          string `json:"uid"`
 	UnionID      string `json:"union_id"`
 	SessionKey   string `json:"session_key"`
 }

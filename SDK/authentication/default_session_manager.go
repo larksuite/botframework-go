@@ -17,7 +17,10 @@ type defaultSessionManager struct {
 
 // NewDefaultSessionManager demo:
 // client := &common.DefaultRedisClient{}
-// client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// err := client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// if err != nil {
+// 	return fmt.Errorf("init redis error[%v]", err)
+// }
 // manager := authentication.NewDefaultSessionManager("DojK2hs*790(", client)
 func NewDefaultSessionManager(encryptKey string, client common.DBClient) *defaultSessionManager {
 	manager := &defaultSessionManager{

@@ -18,7 +18,8 @@ const (
 	GetChatInfoPath                  OpenApiPath = "/open-apis/chat/v4/info/"
 	GetChatListPath                  OpenApiPath = "/open-apis/chat/v4/list/"
 	CardUpdatePath                   OpenApiPath = "/open-apis/interactive/v1/card/update"
-	MPLoginValidatePath              OpenApiPath = "/open-apis/mina/loginValidate"           //mini programe login validate, ExchangeToken
+	MPValidateByAppTokenPath         OpenApiPath = "/open-apis/mina/v2/tokenLoginValidate"   //mini programe login validate, ExchangeToken
+	MPValidateByIDSecretPath         OpenApiPath = "/open-apis/mina/loginValidate"           //mini programe login validate, ExchangeToken
 	OpenSSOValidatePath              OpenApiPath = "/connect/qrconnect/oauth2/access_token/" //open sso login validate, ExchangeToken/RefreshToken
 	OpenSSOGetCodePath               OpenApiPath = "/connect/qrconnect/page/sso/"            //open sso, GetCode
 )

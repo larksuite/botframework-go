@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/larksuite/botframework-go/SDK/auth"
 	"github.com/larksuite/botframework-go/SDK/common"
 	"github.com/larksuite/botframework-go/SDK/protocol"
 )
@@ -17,7 +18,10 @@ type AuthMiniProgram struct {
 
 // NewAuthMiniProgram demo:
 // client := &common.DefaultRedisClient{}
-// client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// err := client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// if err != nil {
+// 	return fmt.Errorf("init redis error[%v]", err)
+// }
 // manager := authentication.NewDefaultSessionManager("DojK2hs*790(", client)
 // minaAuth := authentication.NewAuthMiniProgram(manager, time.Hour*24*7)
 func NewAuthMiniProgram(manager SessionManager, validPeriod time.Duration) *AuthMiniProgram {
@@ -34,20 +38,27 @@ func (a *AuthMiniProgram) Init(manager SessionManager, validPeriod time.Duration
 	a.SetCookieDomainLevel(DomainLevelZero) // DomainLevelZero is default auth cookie level
 }
 
-func (a *AuthMiniProgram) Login(ctx context.Context, code string, appInfo *AuthAppInfo, requestHost string) (map[string]*http.Cookie, error) {
+func (a *AuthMiniProgram) Login(ctx context.Context, code string, appID string, requestHost string) (map[string]*http.Cookie, error) {
 	// check params
-	if code == "" || appInfo == nil || appInfo.AppID == "" || appInfo.AppSecret == "" {
+	if code == "" || appID == "" {
 		return nil, common.ErrValidateParams.ErrorWithExtStr("miniProgram login input param is empty")
 	}
 
-	rsp, err := MiniProgramLoginValidate(code, appInfo.AppID, appInfo.AppSecret)
+	// get app_access_token
+	appAccessToken, err := auth.GetAppAccessToken(ctx, appID)
 	if err != nil {
 		return nil, err
 	}
 
-	sessionName := a.Manager.GenerateSessionKeyName(appInfo.AppID)
+	rsp, err := MiniProgramValidateByAppToken(code, appAccessToken)
+	if err != nil {
+		return nil, err
+	}
 
-	authUser := GetAuthUserInfo(rsp)
+	sessionName := a.Manager.GenerateSessionKeyName(appID)
+
+	authUser := TransMPAuthUser(rsp)
+
 	sessionKey, err := a.Manager.SetAuthUserInfo(authUser, a.GetValidPeriod())
 	if err != nil {
 		return nil, common.ErrMinaSetAuth.ErrorWithExtErr(err)
@@ -119,22 +130,24 @@ func (a *AuthMiniProgram) GetValidPeriod() time.Duration {
 	return a.ValidPeriod
 }
 
-func GetAuthUserInfo(rsp *protocol.MiniProgramLoginResponse) *AuthUserInfo {
+func (a *AuthMiniProgram) GetSessionManager() SessionManager {
+	return a.Manager
+}
+
+func TransMPAuthUser(rsp *protocol.MiniProgramLoginByAppTokenResponse) *AuthUserInfo {
 	authUser := &AuthUserInfo{}
 
-	authUser.Token.AccessToken = rsp.AccessToken
-	authUser.Token.TokenType = rsp.TokenType
-	authUser.Token.ExpiresIn = rsp.ExpiresIn
-	authUser.Token.RefreshToken = rsp.RefreshToken
+	authUser.Token.AccessToken = rsp.Data.AccessToken
+	authUser.Token.TokenType = rsp.Data.TokenType
+	authUser.Token.ExpiresIn = rsp.Data.ExpiresIn
+	authUser.Token.RefreshToken = rsp.Data.RefreshToken
 
-	authUser.User.TenantKey = rsp.TenantKey
-	authUser.User.OpenID = rsp.OpenID
-	authUser.User.EmployeeID = rsp.EmployeeID
+	authUser.User.TenantKey = rsp.Data.TenantKey
+	authUser.User.OpenID = rsp.Data.OpenID
 
 	authUser.Extra = map[string]string{
-		"uid":         rsp.UID,
-		"union_id":    rsp.UnionID,
-		"session_key": rsp.SessionKey,
+		"union_id":    rsp.Data.UnionID,
+		"session_key": rsp.Data.SessionKey,
 	}
 
 	return authUser
