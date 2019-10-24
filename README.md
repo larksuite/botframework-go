@@ -95,11 +95,11 @@ You must init app config before using SDK. You can follow these steps to do it.
 2. get config from environment variable.  
 ```go
 conf := &appconfig.AppConfig{
-    AppID: os.Getenv("AppID"),//在飞书开放平台的凭证与基础信息中获取
-    AppType: protocol.InternalApp, //apptype只有两种，Independent Software Vendor App 和 Internal App
-    AppSecret:   os.Getenv("AppSecret"),//在飞书开放平台的凭证与基础信息中获取
-    VerifyToken: os.Getenv("VerifyToken"),///在飞书开放平台的事件订阅中获取
-    EncryptKey:  os.Getenv("EncryptKey"),//在飞书开放平台的事件订阅中获取
+    AppID: os.Getenv("AppID"),              //get it from lark-voucher and basic information。
+    AppType: protocol.InternalApp,          //AppType only has two types: Independent Software Vendor App（ISVApp） or Internal App.
+    AppSecret:   os.Getenv("AppSecret"),    //get it from lark-voucher and basic information.
+    VerifyToken: os.Getenv("VerifyToken"),  //get it from lark-event subscriptions.
+    EncryptKey:  os.Getenv("EncryptKey"),   //get it from lark-event subscriptions.
 }
 ```
 
