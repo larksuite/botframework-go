@@ -22,11 +22,12 @@ func InitInfo() error {
 		return fmt.Errorf("init redis-client error[%v]", err)
 	}
 
-	// init app info
+	// get app info
 	conf, err := GetAppConf(redisClient)
 	if err != nil {
 		return fmt.Errorf("get conf error[%v]", err)
 	}
+	// init app info
 	appconfig.Init(*conf)
 
 	//Independent Software Vendor App（ISVApp） has to get APPTicket,if your AppType is not ISV,you can ignore this
@@ -41,10 +42,18 @@ func InitInfo() error {
 		}
 	}
 
-	//If you need to register an/a event/card callback，you can do it here. You can reference this simple example or detailed introduction from file（4.webhook-event和5.webhook-card）
-	//event.EventRegister(appID, protocol.EventTypeMessage, EventMessage)
+	//If you need to register an/a event/card callback，you can do it here.
+	//You can reference this simple example or detailed introduction from file（4.webhook-event和5.webhook-card）
+
+	// regist open platform event handler
+	// event.EventRegister(appID, protocol.EventTypeMessage, EventMessage)
+
+	// regist bot recv message handler
 	//event.BotRecvMsgRegister(appID, "help", BotRecvMsgHelp)
+
+	// regist card action handler
 	//event.CardRegister(appID, "testcard", ActionTestCard)
+
 	return nil
 }
 

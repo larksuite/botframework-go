@@ -11,7 +11,10 @@ type DefaultAppTicketManager struct {
 
 // NewDefaultAppTicketManager demo:
 // client := &common.DefaultRedisClient{}
-// client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// err := client.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+// if err != nil {
+// 	return fmt.Errorf("init redis error[%v]", err)
+// }
 // manager := auth.NewDefaultAppTicketManager(client)
 func NewDefaultAppTicketManager(client common.DBClient) *DefaultAppTicketManager {
 	r := &DefaultAppTicketManager{

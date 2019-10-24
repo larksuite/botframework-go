@@ -1,6 +1,7 @@
 # botframework-go
-botframework-go is a golang Software Development Kit which gives tools and interfaces to developers needed to access to lark open platform APIs.
-It support to generate code using Gin framework.
+botframework-go is a golang Software Development Kit which gives tools and interfaces to developers needed to access to Lark Open Platfom APIs.
+It support for developing a robot application or mini-program application based on the Lark Open Platfom.
+It support for generateing code using Gin framework.
 
 # List of Main Features
 ## Subscribe to Event Notification
@@ -34,6 +35,10 @@ Obtain app_access_token (ISV apps or internal apps)
 Re-pushing app_ticket
 - ReSendAppTicket
 
+## Authentication
+- Mini Program Authentication
+- Open SSO Authentication
+
 ## Bot Send Message
 Interfaces
 - SendTextMessage
@@ -55,121 +60,64 @@ Interfaces
 - CheckBotInGroup
 - CheckUserBotInSameGroup
 
-## Richtext Builder
-build richtext demo
-```go
-postForm := make(map[protocol.Language]*protocol.RichTextForm)
-
-// en-us
-titleUS := "this is a title"
-contentUS := message.NewRichTextContent()
-
-// first line
-contentUS.AddElementBlock(
-    message.NewTextTag("first line: ", true, 1),
-    message.NewATag("hyperlinks ", true, "https://www.feishu.cn"),
-    message.NewAtTag("username", userID),
-)
-
-// second line
-contentUS.AddElementBlock(
-    message.NewTextTag("second line: ", true, 1),
-    message.NewTextTag("text test", true, 1),
-)
-
-postForm[protocol.EnUS] = message.NewRichTextForm(&titleUS, contentUS)
-
-// zh-cn
-titleCN := "这是一个标题"
-contentCN := message.NewRichTextContent()
-
-// first line
-contentCN.AddElementBlock(
-    message.NewTextTag("第一行: ", true, 1),
-    message.NewATag("超链接 ", true, "https://www.feishu.cn"),
-    message.NewAtTag("username", userID),
-)
-
-// second line
-contentCN.AddElementBlock(
-    message.NewTextTag("第二行: ", true, 1),
-    message.NewTextTag("文本测试", true, 1),
-)
-
-postForm[protocol.ZhCN] = message.NewRichTextForm(&titleCN, contentCN)
-```
-See more examples in file "SDK/message/message_test.go"
-
-## Card Builder
-build Card demo
-```go
-//card builder
-builder := &message.CardBuilder{}
-
-//add config
-config := protocol.ConfigForm{
-    MinVersion:     protocol.VersionForm{},
-    WideScreenMode: true,
-}
-builder.SetConfig(config)
-
-//add header
-content := "Please choose color"
-line := 1
-title := protocol.TextForm{
-    Tag:     protocol.PLAIN_TEXT_E,
-    Content: &content,
-    Lines:   &line,
-}
-builder.AddHeader(title, "")
-
-//add hr
-builder.AddHRBlock()
-
-//add block
-builder.AddDIVBlock(nil, []protocol.FieldForm{
-    *message.NewField(false, message.NewMDText("**Async**", nil, nil, nil)),
-}, nil)
-
-//add divBlock
-builder.AddDIVBlock(nil, []protocol.FieldForm{
-    *message.NewField(false, message.NewMDText("**Sync**", nil, nil, nil)),
-}, nil)
-
-//add actionBlock
-payload1 := make(map[string]string, 0)
-payload1["color"] = "red"
-builder.AddActionBlock([]protocol.ActionElement{
-    message.NewButton(message.NewMDText("red", nil, nil, nil),
-        nil, nil, payload1, protocol.PRIMARY, nil, "asyncButton"),
-})
-
-//add jumpBlock
-url := "https://www.google.com"
-ext := message.NewJumpButton(message.NewMDText("jump to google", nil, nil, nil), &url, nil, protocol.DEFAULT)
-builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, ext)
-
-//add imageBlock
-builder.AddImageBlock(
-    message.NewMDText("", nil, nil, nil),
-    *message.NewMDText("", nil, nil, nil),
-    imageKey)
-
-//generate card
-card, err := builder.BuildForm()
-```
-See more examples in file "SDK/message/message_test.go"
+## Message Builder
+- Richtext Builder
+- Card Builder
 
 # Directory Description
-- SDK           : Lark open platform APIs
-    - appconfig : Appinfo config
-    - auth      : Authorization
-    - chat      : Group
-    - common    : Common functions/definition
-    - event     : Event notification/card action callback/bot command callback
-    - message   : Bot send message。
-    - protocol  : Lark open platform protocol
-- generatecode  : Generate code using Gin framework
+- SDK:                Lark open platform APIs
+    - appconfig:      Appinfo config
+    - auth:           Authorization
+    - authentication: Authentication
+    - chat:           Group
+    - common:         Common functions/definition
+    - event:          Event notification/card action callback/bot command callback
+    - message:        Bot send message
+    - protocol:       Lark open platform protocol
+- generatecode:       Generate code using Gin framework
+
+# SDK Instruction
+## Log Initialization
+Log Initialization function `func InitLogger(log LogInterface, option interface{})`. demo: `common.InitLogger(common.NewCommonLogger(), common.DefaultOption())`
+
+Developers can use the custom log library by implementing the LogInterface interface
+
+## SDK Initialization
+You must init app config before using SDK. You can follow these steps to do it.
+1. Get necessary information, such as AppID, AppSecret, VerifyToken and EncryptKey. But you'd better not use clear text in code. Getting them from database or environment variable is a better way.
+2. Init app config.
+3. Get appTickey if your app is Independent Software Vendor App, otherwise you can ignore this.
+4. Register events what you want.
+
+### Example code
+1. get config from redis.
+   [demo code](./demo/sdk_init/sdk_init.go)
+2. get config from environment variable.
+```go
+conf := &appconfig.AppConfig{
+    AppID: os.Getenv("AppID"),//在飞书开放平台的凭证与基础信息中获取
+    AppType: protocol.InternalApp, //apptype只有两种，Independent Software Vendor App 和 Internal App
+    AppSecret:   os.Getenv("AppSecret"),//在飞书开放平台的凭证与基础信息中获取
+    VerifyToken: os.Getenv("VerifyToken"),///在飞书开放平台的事件订阅中获取
+    EncryptKey:  os.Getenv("EncryptKey"),//在飞书开放平台的事件订阅中获取
+}
+```
+
+## DB-client Initialization
+`DBClient` SDK DB Client interface.
+It is used for: read/write app ticket ; read/write user session data for authentication operations; read sensitive information such as app secret.
+
+`DefaultRedisClient` Default Redis Client. Need to be initialized before use.
+demo:
+```golang
+redisClient := &common.DefaultRedisClient{}
+err := redisClient.InitDB(map[string]string{"addr": "127.0.0.1:6379"})
+if err != nil {
+    return fmt.Errorf("init redis-client error[%v]", err)
+}
+```
+
+Developers can use the custom db client library by implementing the DBClient interface
 
 # Generate code using Gin framework
 ## Config
@@ -220,7 +168,6 @@ go build
 ```
 
 ## Generate Code Rule
-If the code is first generated, all code files are generated by the configuration file.
-If you modify the configuration file later, and regenerate the code on the original path,
-only the "./handler/regist.go" file will be forced updated, other files are not updated to avoid overwriting user-defined code.
-Because the "./handler/regist.go" file will be forced update, you should not write your business code in the file.
+- If the code is first generated, all code files are generated by the configuration file.
+- If you modify the configuration file later, and regenerate the code on the original path, only the `./handler/regist.go` file will be forced updated, other files are not updated to avoid overwriting user-defined code.
+- Because the `./handler/regist.go` file will be forced update, you should not write your business code in the file.
