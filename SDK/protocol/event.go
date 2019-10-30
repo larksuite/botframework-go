@@ -12,22 +12,28 @@ const (
 
 const (
 	// notification-subtype
-	EventTypeApproval        = "approval"                         // notification--approval
-	EventTypeLeaveApproval   = "leave_approval"                   // notification--leave_approval
-	EventTypeWorkApproval    = "work_approval"                    // notification--work_approval
-	EventTypeShiftApproval   = "shift_approval"                   // notification--shift_approval
-	EventTypeRemedyApproval  = "remedy_approval"                  // notification--remedy_approval
-	EventTypeTripApproval    = "trip_approval"                    // notification--trip_approval
-	EventTypeAppOpen         = "app_open"                         // notification--app_open
-	EventTypeContactUser     = "user_add,user_update,user_leave"  // notification--contact_user
-	EventTypeContactDept     = "dept_add,dept_update,dept_delete" // notification--contact_Department
-	EventTypeContactScope    = "contact_scope_change"             // notification--contact_scope
-	EventTypeMessage         = "message"                          // notification--message
-	EventTypeRemoveBot       = "remove_bot"                       // notification--remove_bot
-	EventTypeAddBot          = "add_bot"                          // notification--add_bot
-	EventTypeP2PChatCreate   = "p2p_chat_create"                  // notification--p2p_chat_create
-	EventTypeAppTicket       = "app_ticket"                       // notification--app_ticket
-	EventTypeAppStatusChange = "app_status_change"                // notification--app_status
+	EventTypeApproval             = "approval"                                                         // notification--approval
+	EventTypeLeaveApproval        = "leave_approval"                                                   // notification--leave_approval
+	EventTypeWorkApproval         = "work_approval"                                                    // notification--work_approval
+	EventTypeShiftApproval        = "shift_approval"                                                   // notification--shift_approval
+	EventTypeRemedyApproval       = "remedy_approval"                                                  // notification--remedy_approval
+	EventTypeTripApproval         = "trip_approval"                                                    // notification--trip_approval
+	EventTypeAppOpen              = "app_open"                                                         // notification--app_open
+	EventTypeContactUser          = "user_add,user_update,user_leave"                                  // notification--contact_user
+	EventTypeContactDept          = "dept_add,dept_update,dept_delete"                                 // notification--contact_Department
+	EventTypeContactScope         = "contact_scope_change"                                             // notification--contact_scope
+	EventTypeMessage              = "message"                                                          // notification--message
+	EventTypeRemoveBot            = "remove_bot"                                                       // notification--remove_bot
+	EventTypeAddBot               = "add_bot"                                                          // notification--add_bot
+	EventTypeP2PChatCreate        = "p2p_chat_create"                                                  // notification--p2p_chat_create
+	EventTypeAppTicket            = "app_ticket"                                                       // notification--app_ticket
+	EventTypeAppStatusChange      = "app_status_change"                                                // notification--app_status
+	EventTypeUserToChat           = "add_user_to_chat,remove_user_from_chat,revoke_add_user_from_chat" // notification--add_user_to_chat
+	EventTypeChatDisband          = "chat_disband"                                                     // notification--chat_disband
+	EventTypeGroupSettingUpdate   = "group_setting_update"                                             // notification--group_setting_update
+	EventTypeOrderPaid            = "order_paid"                                                       // notification--order_paid
+	EventTypeCreateWidgetInstance = "create_widget_instance"                                           // notification--create_widget_instance
+	EventTypeDeleteWidgetInstance = "delete_widget_instance"                                           // notification--delete_widget_instance
 )
 
 const (
@@ -303,6 +309,72 @@ type AppStatusChangeEvent struct {
 	BaseEvent
 
 	Status string `json:"status"` // StartByTenant/StopByTenant/StopByPlatform
+}
+
+type UserToChatEvent struct {
+	BaseEvent
+
+	ChatID   string     `json:"chat_id"`
+	Operator UserIDInfo `json:"operator"`
+	Users    []struct {
+		Name string `json:"name"`
+		UserIDInfo
+	} `json:"users"`
+}
+
+type ChatDisbandEvent struct {
+	BaseEvent
+
+	ChatID   string     `json:"chat_id"`
+	Operator UserIDInfo `json:"operator"`
+}
+
+type GroupSettingUpdateEvent struct {
+	BaseEvent
+
+	ChatID   string     `json:"chat_id"`
+	Operator UserIDInfo `json:"operator"`
+
+	AfterChange struct {
+		MessageNotification bool   `json:"message_notification"`  // case: change message notification
+		AddMemberPermission string `json:"add_member_permission"` // case: change add-member permission
+		OwnerOpenId         string `json:"owner_open_id"`         // case: change group owner
+		OwnerUserId         string `json:"owner_user_id"`         // case: change group owner
+	} `json:"after_change"`
+
+	BeforeChange struct {
+		MessageNotification bool   `json:"message_notification"`  // case: change message notification
+		AddMemberPermission string `json:"add_member_permission"` // case: change add-member permission
+		OwnerOpenId         string `json:"owner_open_id"`         // case: change group owner
+		OwnerUserId         string `json:"owner_user_id"`         // case: change group owner
+	} `json:"before_change"`
+}
+
+type OrderPaidEvent struct {
+	BaseEvent
+
+	OrderID       string `json:"order_id"`
+	PricePlanID   string `json:"price_plan_id"`
+	PricePlanType string `json:"price_plan_type"`
+	Seats         int    `json:"seats"`
+	BuyCount      int    `json:"buy_count"`
+	CreateTime    string `json:"create_time"`
+	PayTime       string `json:"pay_time"`
+	BuyType       string `json:"buy_type"`
+	SrcOrderID    string `json:"src_order_id"`
+	OrderPayPrice int    `json:"order_pay_price"`
+}
+
+type CreateWidgetInstanceEvent struct {
+	BaseEvent
+
+	InstanceId []string `json:"instance_id"`
+}
+
+type DeleteWidgetInstanceEvent struct {
+	BaseEvent
+
+	InstanceId []string `json:"instance_id"`
 }
 
 // url challenge

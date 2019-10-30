@@ -31,13 +31,13 @@ var (
 func EventRegister(appID, eventType string, eventHandler EventHandler) error {
 	// 参数校验
 	if appID == "" {
-		return common.ErrEventTypeRegister.ErrorWithExtStr("app id is empty")
+		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("app id is empty. AppID[%s]EventType[%s]", appID, eventType))
 	}
 	if eventType == "" {
-		return common.ErrEventTypeRegister.ErrorWithExtStr("event type is empty")
+		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("event type is empty. AppID[%s]EventType[%s]", appID, eventType))
 	}
 	if eventHandler == nil {
-		return common.ErrEventTypeRegister.ErrorWithExtStr("event handler is nil")
+		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("event handler is nil. AppID[%s]EventType[%s]", appID, eventType))
 	}
 
 	if appID2TypeHandler == nil {
@@ -153,13 +153,13 @@ func eventCallbackHandler(ctx context.Context, appID, content string) error {
 	var ok bool
 
 	if eventHandler, ok = appID2TypeHandler[appID]; !ok {
-		return common.ErrEventAppIDUnregistered.Error()
+		return common.ErrEventAppIDUnregistered.ErrorWithExtStr(fmt.Sprintf("AppID[%s]", appID))
 	}
 	if handler, ok = eventHandler[eventType]; !ok {
-		return common.ErrEventTypeUnregistered.Error()
+		return common.ErrEventTypeUnregistered.ErrorWithExtStr(fmt.Sprintf("EventType[%s]", eventType))
 	}
 	if handler == nil {
-		return common.ErrEventHandlerIsNil.Error()
+		return common.ErrEventHandlerIsNil.ErrorWithExtStr(fmt.Sprintf("AppID[%s]EventType[%s]", appID, eventType))
 	}
 
 	byteEvent, err := jsonEvent.MarshalJSON()

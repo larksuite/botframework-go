@@ -20,4 +20,5 @@ type BotRecvMsg struct {
 	ChatType      string
 	OpenID        string
 	OpenMessageID string
+	OriData       interface{}
 }

@@ -101,6 +101,7 @@ func BotRecvMsgHandler(ctx context.Context, data []byte) error {
 		msg.ChatType = msgEvent.ChatType
 		msg.OpenID = msgEvent.OpenID
 		msg.OpenMessageID = msgEvent.OpenMessageID
+		msg.OriData = msgEvent
 
 		textWithoutAtBot = msgEvent.TextWithoutAtBot
 	case protocol.EventMsgTypePost:
@@ -116,6 +117,7 @@ func BotRecvMsgHandler(ctx context.Context, data []byte) error {
 		msg.ChatType = msgEvent.ChatType
 		msg.OpenID = msgEvent.OpenID
 		msg.OpenMessageID = msgEvent.OpenMessageID
+		msg.OriData = msgEvent
 
 		textWithoutAtBot = ""
 	case protocol.EventMsgTypeImage:
@@ -131,6 +133,7 @@ func BotRecvMsgHandler(ctx context.Context, data []byte) error {
 		msg.ChatType = msgEvent.ChatType
 		msg.OpenID = msgEvent.OpenID
 		msg.OpenMessageID = msgEvent.OpenMessageID
+		msg.OriData = msgEvent
 
 		textWithoutAtBot = ""
 	case protocol.EventMsgTypeMergeForward:
@@ -146,6 +149,7 @@ func BotRecvMsgHandler(ctx context.Context, data []byte) error {
 		msg.ChatType = msgEvent.ChatType
 		msg.OpenID = msgEvent.OpenID
 		msg.OpenMessageID = msgEvent.OpenMessageID
+		msg.OriData = msgEvent
 
 		textWithoutAtBot = ""
 	default:

@@ -10,20 +10,26 @@ Interfaces
 - EventCallback
 
 List of supported notification
-- approval
-- leave approval
-- work approval
-- shift approval
-- remedy approval
-- trip approval
-- app open
-- contacts change
-- message
-- remove bot
-- add bot
-- create p2p chat
-- app ticket
-- app status change
+- Request approved
+- Leave approved
+- Overtime approved
+- Shift change approved
+- Correction request approved
+- Business trip approved
+- App enabled
+- Contacts updates
+- Message
+- Bot removed from group chat
+- Bot invited to group chat
+- Create p2p chat
+- App ticket event
+- App status change
+- User in or out the group chat
+- Disband chat
+- Change group chat config
+- Order paid
+- Create a widget instance event
+- Delete a widget instance event
 
 ## Authorization
 Obtain tenant_access_token (ISV apps or internal apps)
