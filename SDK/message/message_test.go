@@ -38,7 +38,7 @@ func TestSendImageMessage(t *testing.T) {
 	}
 	//choose url,path or imageKey
 	//by url
-	url := "http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg"
+	url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
 	resp, err := message.SendImageMessage(c, tenantKey, appConf.AppID, user, "", url, "", "")
 	if err != nil {
 		t.Errorf("SendImageMessage: failed err[%v]", err)
@@ -240,7 +240,7 @@ func TestSendImageMessageBatch(t *testing.T) {
 
 	//choose url,path or imageKey
 	//by url
-	url := "http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg"
+	url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
 	resp, err := message.SendImageMessageBatch(c, tenantKey, appConf.AppID, info, "", url, "", "")
 	if err != nil {
 		t.Errorf("SendImageMessageBatch: failed err[%v]", err)

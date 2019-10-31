@@ -94,7 +94,7 @@ SDK提供默认的日志实现和默认的日志参数，通过如下调用使�
 SDK使用前需要执行初始化操作，具体操作步骤：  
 1. 获取应用相关配置信息（AppID、AppSecret、VerifyToken、EncryptKey 等），为了数据安全，不建议开发者在代码中明文写入这些信息，您可以选择从数据库读取、远程配置系统、环境变量中获取；  
 2. 调用`appconfig.Init(conf)`函数，初始化应用配置；  
-3. 如果是 Independent Software Vendor App (ISVApp), 需要实现读取和保存 AppTicket 的接口。框架提供使用redis读取和保存 AppTicket 的接口实现，你也可以实现`TicketManager`接口，来使自定义 AppTicket 的读写方式;  
+3. 如果是 Independent Software Vendor App (ISVApp)， 需要实现读取和保存 AppTicket 的接口。框架提供使用redis读取和保存 AppTicket 的接口实现，你也可以实现`TicketManager`接口，来使自定义 AppTicket 的读写方式;  
 4. 根据业务逻辑注册事件回调处理函数;  
 
 ### 示例代码
@@ -135,10 +135,10 @@ ServiceInfo:
   CardWebhook: /webhook/card
   AppID: cli_12345        # 应用ID
   Description: test_demo  # 应用描述信息
-  IsISVApp: false         # ISV 应用标志, 默认为非ISV应用
+  IsISVApp: false         # ISV 应用标志，默认为非ISV应用
 EventList:
   - EventName: Message           # 必须
-  # - EventName: AppTicket       # 按需使用, ISV应用 必须订阅
+  # - EventName: AppTicket       # 按需使用，ISV应用 必须订阅
   # - EventName: Approval        # 按需使用
   # - EventName: LeaveApproval   # 按需使用
   # - EventName: WorkApproval    # 按需使用
@@ -178,3 +178,11 @@ go build
 - 之后若修改配置文件（修改代码路径之外的其他选项），在原始的路径上重新生成代码时，只会强制更新`./handler/regist.go`文件，其他文件不会更新，以避免覆盖用户自定义代码。  
 - `./handler/regist.go`文件，会被强制更新，用户不应该在该文件中加入自定义代码。  
 
+# 示例说明
+- [管理 AppAccessToken](./docs/zh/app_access_token.md)
+- [管理 TenantAccessToken](./docs/zh/tenant_access_token.md)
+- [订阅事件回调](./docs/zh/webhook_event.md)
+- [卡片交互事件回调](./docs/zh/webhook_card.md)
+- [发送消息](./docs/zh/send_message.md)
+- [构造卡片消息](./docs/zh/send_card.md)
+- [身份认证/小程序登录](./docs/zh/authentication.md)

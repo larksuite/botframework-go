@@ -14,9 +14,9 @@ import (
 // If the code is first generated, all code files are generated from the configuration file.
 //
 // If you modify the configuration file later, and regenerate the code on the original path,
-// only the ./handler/regist.go will be forced updated, other files are not updated to avoid overwriting user-defined code.
+// only the ./handler_event/regist.go will be forced updated, other files are not updated to avoid overwriting user-defined code.
 //
-// The ./handler/regist.go file will be forced update, you should not write your business code in the file.
+// The ./handler_event/regist.go file will be forced update, you should not write your business code in the file.
 
 // RegistHandler: regist handler
 func RegistHandler(appID string) {
