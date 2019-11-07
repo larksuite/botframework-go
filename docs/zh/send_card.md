@@ -229,7 +229,7 @@ builder.AddActionBlock([]protocol.ActionElement{
 示例代码如下：  
 ```go
 // use message.UpdateCard function to update card
-func UpdateCard(token,tenantkey,appid,openid string)(error){
+func UpdateCard(token, tenantkey, appid string, openid []string) error {
     //token可以在交互模块回调时获得
 
 	//build a new card
@@ -261,10 +261,10 @@ func UpdateCard(token,tenantkey,appid,openid string)(error){
 	}
 
 	// card.OpenIDs can't be nil.
-	card.OpenIDs=[]string{openid}
+	card.OpenIDs = openid
 
-	_,err = message.UpdateCard(context.TODO(),tenantkey,appid,token,*card)
-	if err != nil{
+	_, err = message.UpdateCard(context.TODO(), tenantkey, appid, token, *card)
+	if err != nil {
 		return fmt.Errorf("card update failed error[%v]", err)
 	}
 	return nil

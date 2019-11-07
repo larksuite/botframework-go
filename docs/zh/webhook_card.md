@@ -174,4 +174,4 @@ func ActionClickButton(ctx context.Context, callback *protocol.CardCallbackForm)
    return card, nil
 }
 ```  
-该响应函数实现: 用户点击按钮后，将卡片上的按钮更新为灰色不可点击状态。
+该响应函数实现: 用户点击按钮后，将卡片上的按钮更新为灰色状态。

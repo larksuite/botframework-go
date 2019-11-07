@@ -243,7 +243,7 @@ The field value is the user openid array.
 Example code:    
 ```go
 // use message.UpdateCard function to update card
-func UpdateCard(token,tenantkey,appid,openid string)(error){
+func UpdateCard(token, tenantkey, appid string, openid []string) error {
     //you can get token by card callback
 
 	//build a new card
@@ -275,14 +275,15 @@ func UpdateCard(token,tenantkey,appid,openid string)(error){
 	}
 
 	// card.OpenIDs can't be nil.
-	card.OpenIDs=[]string{openid}
+	card.OpenIDs = openid
 
-	_,err = message.UpdateCard(context.TODO(),tenantkey,appid,token,*card)
-	if err != nil{
+	_, err = message.UpdateCard(context.TODO(), tenantkey, appid, token, *card)
+	if err != nil {
 		return fmt.Errorf("card update failed error[%v]", err)
 	}
 	return nil
 }
+
 ```
   
 
