@@ -1,3 +1,7 @@
+// Copyright (c) 2019 Bytedance Inc.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package message_test
 
 import (
@@ -46,7 +50,7 @@ func TestGetImageKey(t *testing.T) {
 	InitTestParams()
 
 	// by path
-	path := "/tmp/test.png"
+	path := "../../demo/source/lark0.jpg"
 	key, err := message.GetImageKey(c, tenantKey, appConf.AppID, "", path)
 	if err != nil {
 		t.Errorf("GetImageKeyByPath failed: %v", err)
@@ -55,7 +59,7 @@ func TestGetImageKey(t *testing.T) {
 	}
 
 	// by url
-	url := "http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg"
+	url := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
 	key, err = message.GetImageKey(c, tenantKey, appConf.AppID, url, "")
 	if err != nil {
 		t.Errorf("GetImageKeyByURL failed: %v", err)

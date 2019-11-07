@@ -37,7 +37,7 @@ func sendImageMessage(chatID, tenantKey, appID string) error {
    ctx := context.TODO()
 
     //发送图片消息，以url为例
-    url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+    url := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
     _, err := message.SendImageMessage(ctx, tenantKey, appID, user, "", url, "", "")
     if err != nil {
         return fmt.Errorf("send image failed[%v]", err)
@@ -56,7 +56,7 @@ func sendImageMessage(chatID, tenantKey, appID string) error {
     }
     ctx := context.TODO()
 
-    url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+    url := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
     imagekey,err := message.GetImageKey(ctx, tenantKey, appID, url, "" )
     if err != nil{
         return fmt.Errorf("get imageKey failed[%v]", err)

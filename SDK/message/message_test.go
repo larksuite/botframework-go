@@ -38,7 +38,7 @@ func TestSendImageMessage(t *testing.T) {
 	}
 	//choose url,path or imageKey
 	//by url
-	url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+	url := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
 	resp, err := message.SendImageMessage(c, tenantKey, appConf.AppID, user, "", url, "", "")
 	if err != nil {
 		t.Errorf("SendImageMessage: failed err[%v]", err)
@@ -46,7 +46,7 @@ func TestSendImageMessage(t *testing.T) {
 		t.Logf("SendImageMessage: succ messageID[%s]", resp.Data.MessageID)
 	}
 	//by path
-	path := "/tmp/test.png"
+	path := "../../demo/source/lark0.jpg"
 	resp, err = message.SendImageMessage(c, tenantKey, appConf.AppID, user, "", "", path, "")
 	if err != nil {
 		t.Errorf("SendImageMessage: failed err[%v]", err)
@@ -240,7 +240,7 @@ func TestSendImageMessageBatch(t *testing.T) {
 
 	//choose url,path or imageKey
 	//by url
-	url := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+	url := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
 	resp, err := message.SendImageMessageBatch(c, tenantKey, appConf.AppID, info, "", url, "", "")
 	if err != nil {
 		t.Errorf("SendImageMessageBatch: failed err[%v]", err)
@@ -249,7 +249,7 @@ func TestSendImageMessageBatch(t *testing.T) {
 	}
 
 	//by path
-	path := "/tmp/test.png"
+	path := "../../demo/source/lark0.jpg"
 	resp, err = message.SendImageMessageBatch(c, tenantKey, appConf.AppID, info, "", "", path, "")
 	if err != nil {
 		t.Errorf("SendImageMessageBatch: failed err[%v]", err)
@@ -346,11 +346,13 @@ func TestSendShareChatMessageBatch(t *testing.T) {
 func TestSendCardMessageBatch(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
+
 	info := &protocol.BatchBaseInfo{
 		DepartmentIDs: []string{},
 		OpenIDs:       []string{openID},
 		UserIDs:       []string{},
 	}
+
 	url := "https://www.google.com"
 	content := "card message test"
 	card := protocol.CardForm{
@@ -370,6 +372,7 @@ func TestSendCardMessageBatch(t *testing.T) {
 		},
 		Elements: []interface{}{},
 	}
+
 	resp, err := message.SendCardMessageBatch(c, tenantKey, appConf.AppID, info, "", card, true)
 	if err != nil {
 		t.Errorf("SendCardMessageBatch: failed err[%v]", err)

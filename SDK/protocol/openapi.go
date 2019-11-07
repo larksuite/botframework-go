@@ -28,3 +28,11 @@ type BaseResponse struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
+
+const (
+	ErrAppTicketNil              = 10003
+	ErrAppTicketInvalid          = 10012
+	ErrTenantAccessTokenInvalid  = 99991663
+	ErrAppAccessTokenInvalid     = 99991664
+	ErrMinaAppAccessTokenInvalid = 10202
+)

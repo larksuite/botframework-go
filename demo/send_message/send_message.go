@@ -1,3 +1,7 @@
+// Copyright (c) 2019 Bytedance Inc.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -80,7 +84,7 @@ func sendImageMessage(chatID, tenantKey, appID string) error {
 	ctx := context.TODO()
 
 	//send image(use imageurl)
-	imageURL := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+	imageURL := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
 	_, err := message.SendImageMessage(ctx, tenantKey, appID, user, "", imageURL, "", "")
 	if err != nil {
 		common.Logger(ctx).Errorf("send image failed[%v]", err)

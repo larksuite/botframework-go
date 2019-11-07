@@ -1,3 +1,7 @@
+// Copyright (c) 2019 Bytedance Inc.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package authentication
 
 import (
@@ -52,6 +56,9 @@ func (a *AuthMiniProgram) Login(ctx context.Context, code string, appID string, 
 
 	rsp, err := MiniProgramValidateByAppToken(code, appAccessToken)
 	if err != nil {
+		if rsp.Code == protocol.ErrMinaAppAccessTokenInvalid {
+			auth.DisableAppToken(ctx, appID)
+		}
 		return nil, err
 	}
 

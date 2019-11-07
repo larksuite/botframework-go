@@ -83,7 +83,7 @@ func openSSOValidate(ctx context.Context, tokenReq *protocol.OpenSSOTokenRequest
 		return nil, common.ErrValidateParams.ErrorWithExtStr("refresh_token is empty")
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.OpenSSOValidatePath, common.NewHeaderJson(), tokenReq)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.OpenSSOValidatePath, common.NewHeaderJson(), tokenReq)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -95,7 +95,7 @@ func openSSOValidate(ctx context.Context, tokenReq *protocol.OpenSSOTokenRequest
 	}
 
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
 
 	return rspData, nil

@@ -106,7 +106,7 @@ func SendCardMessage(ctx context.Context, tenantKey, appID string,
 // UpdateCard: update card
 func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card protocol.CardForm) (*protocol.UpdateCardResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || token == "" {
+	if appID == "" || token == "" {
 		return nil, common.ErrCardUpdateParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -120,7 +120,7 @@ func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card
 		Card:  card,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.CardUpdatePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.CardUpdatePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -130,9 +130,12 @@ func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }
 
@@ -229,7 +232,7 @@ func sendMsg(ctx context.Context,
 	tenantKey, appID string,
 	request *protocol.SendMsgRequest) (*protocol.SendMsgResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || request == nil {
+	if appID == "" || request == nil {
 		return nil, common.ErrSendMsgParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -238,7 +241,7 @@ func sendMsg(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -248,9 +251,12 @@ func sendMsg(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }
 
@@ -258,7 +264,7 @@ func sendCardMsg(ctx context.Context,
 	tenantKey, appID string,
 	request *protocol.SendCardMsgRequest) (*protocol.SendCardMsgResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || request == nil {
+	if appID == "" || request == nil {
 		return nil, common.ErrSendMsgParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -267,7 +273,7 @@ func sendCardMsg(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -277,9 +283,12 @@ func sendCardMsg(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }
 
@@ -287,7 +296,7 @@ func sendMsgBatch(ctx context.Context,
 	tenantKey, appID string,
 	request *protocol.SendMsgBatchRequest) (*protocol.SendMsgBatchResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || request == nil {
+	if appID == "" || request == nil {
 		return nil, common.ErrSendMsgParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -296,7 +305,7 @@ func sendMsgBatch(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -306,9 +315,12 @@ func sendMsgBatch(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }
 
@@ -316,7 +328,7 @@ func sendCardMsgBatch(ctx context.Context,
 	tenantKey, appID string,
 	request *protocol.SendCardMsgBatchRequest) (*protocol.SendCardMsgBatchResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || request == nil {
+	if appID == "" || request == nil {
 		return nil, common.ErrSendMsgParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -325,7 +337,7 @@ func sendCardMsgBatch(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -335,8 +347,11 @@ func sendCardMsgBatch(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }

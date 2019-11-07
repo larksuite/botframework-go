@@ -15,22 +15,34 @@ import (
 	"github.com/larksuite/botframework-go/SDK/protocol"
 )
 
+// Common HTTP methods.
+const (
+	HTTPMethodGet     = "GET"
+	HTTPMethodHead    = "HEAD"
+	HTTPMethodPost    = "POST"
+	HTTPMethodPut     = "PUT"
+	HTTPMethodPatch   = "PATCH"
+	HTTPMethodDelete  = "DELETE"
+	HTTPMethodConnect = "CONNECT"
+	HTTPMethodOptions = "OPTIONS"
+	HTTPMethodTrace   = "TRACE"
+)
+
 // DoHttpPostOApi open platform POST http
-func DoHttpPostOApi(path protocol.OpenApiPath, headers map[string]string, data interface{}) ([]byte, error) {
+func DoHttpPostOApi(path protocol.OpenApiPath, headers map[string]string, data interface{}) ([]byte, int, error) {
 	reqBody := new(bytes.Buffer)
 	err := json.NewEncoder(reqBody).Encode(data)
 	if err != nil {
-		return nil, fmt.Errorf("jsonEncodeError[%v]", err)
+		return nil, 0, fmt.Errorf("jsonEncodeError[%v]", err)
 	}
 
 	reqURL := GetOpenPlatformHost() + string(path)
 
-	return DoHttp("POST", reqURL, headers, reqBody)
+	return DoHttp(HTTPMethodPost, reqURL, headers, reqBody)
 }
 
 // DoHttpGetOApi open platform GET http
-func DoHttpGetOApi(path protocol.OpenApiPath, headers map[string]string, params map[string]string) ([]byte, error) {
-	// http URL
+func DoHttpGetOApi(path protocol.OpenApiPath, headers map[string]string, params map[string]string) ([]byte, int, error) {
 	reqURL := GetOpenPlatformHost() + string(path)
 
 	if params != nil && len(params) > 0 {
@@ -43,13 +55,56 @@ func DoHttpGetOApi(path protocol.OpenApiPath, headers map[string]string, params 
 	}
 
 	reqBody := new(bytes.Buffer)
-	return DoHttp("GET", reqURL, headers, reqBody)
+	return DoHttp(HTTPMethodGet, reqURL, headers, reqBody)
 }
 
-func DoHttp(method string, url string, headers map[string]string, body *bytes.Buffer) ([]byte, error) {
+// DoHttpPutOApi open platform PUT http
+func DoHttpPutOApi(path protocol.OpenApiPath, headers map[string]string, data interface{}) ([]byte, int, error) {
+	reqBody := new(bytes.Buffer)
+	err := json.NewEncoder(reqBody).Encode(data)
+	if err != nil {
+		return nil, 0, fmt.Errorf("jsonEncodeError[%v]", err)
+	}
+
+	reqURL := GetOpenPlatformHost() + string(path)
+
+	return DoHttp(http.MethodPut, reqURL, headers, reqBody)
+}
+
+// DoHttpPatchApi open platform PATCH http
+func DoHttpPatchApi(path protocol.OpenApiPath, headers map[string]string, data interface{}) ([]byte, int, error) {
+	reqBody := new(bytes.Buffer)
+	err := json.NewEncoder(reqBody).Encode(data)
+	if err != nil {
+		return nil, 0, fmt.Errorf("jsonEncodeError[%v]", err)
+	}
+
+	reqURL := GetOpenPlatformHost() + string(path)
+
+	return DoHttp(http.MethodPatch, reqURL, headers, reqBody)
+}
+
+// DoHttpDeleteOApi open platform DELETE http
+func DoHttpDeleteOApi(path protocol.OpenApiPath, headers map[string]string, params map[string]string) ([]byte, int, error) {
+	reqURL := GetOpenPlatformHost() + string(path)
+
+	if params != nil && len(params) > 0 {
+		m := make(url.Values)
+		for k, v := range params {
+			m.Set(k, v)
+		}
+
+		reqURL = reqURL + "?" + m.Encode()
+	}
+
+	reqBody := new(bytes.Buffer)
+	return DoHttp(http.MethodDelete, reqURL, headers, reqBody)
+}
+
+func DoHttp(method string, url string, headers map[string]string, body *bytes.Buffer) ([]byte, int, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return nil, fmt.Errorf("httpNewRequestError[%v]", err)
+		return nil, 0, fmt.Errorf("httpNewRequestError[%v]", err)
 	}
 
 	// http header
@@ -67,18 +122,15 @@ func DoHttp(method string, url string, headers map[string]string, body *bytes.Bu
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("httpDoError[%v]", err)
-	}
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("httpRetError statusCode[%d]", resp.StatusCode)
+		return nil, 0, fmt.Errorf("httpDoError[%v]", err)
 	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("readRespBodyError[%v]", err)
+		return nil, resp.StatusCode, fmt.Errorf("readRespBodyError[%v]", err)
 	}
 
-	return respBody, nil
+	return respBody, resp.StatusCode, nil
 }
 
 func NewHeaderToken(accessToken string) map[string]string {

@@ -9,16 +9,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/larksuite/botframework-go/SDK/appconfig"
 	"github.com/larksuite/botframework-go/SDK/common"
 	"github.com/larksuite/botframework-go/SDK/protocol"
-)
-
-const (
-	ExpireInterval      = 60 * 5
-	ErrAppTicketInvalid = 10012
 )
 
 var (
@@ -41,17 +35,14 @@ func InitISVAppTicketManager(ticketManager TicketManager) error {
 }
 
 func GetTenantAccessToken(ctx context.Context, tenantKey, appID string) (string, error) {
-	appToken, err := appconfig.GetToken(appID)
+	tokenManager, err := appconfig.GetTokenManager(appID)
 	if err != nil {
 		return "", common.ErrAppTokenNotFound.ErrorWithExtErr(err)
 	}
 
-	tenantAccessToken, ok := appToken.TenantAccessToken[tenantKey]
-	if ok && tenantAccessToken != nil &&
-		tenantAccessToken.Token != "" &&
-		tenantAccessToken.Expire > time.Now().Unix() {
-
-		return tenantAccessToken.Token, nil
+	cacheTenantAccessToken, err := tokenManager.GetTenantAccessToken(tenantKey)
+	if err == nil && cacheTenantAccessToken != "" {
+		return cacheTenantAccessToken, nil
 	}
 
 	appInfo, err := appconfig.GetConfig(appID)
@@ -77,17 +68,16 @@ func GetTenantAccessToken(ctx context.Context, tenantKey, appID string) (string,
 		}
 	}
 
-	if respBodyObj != nil {
-		if appToken.TenantAccessToken[tenantKey] == nil {
-			appToken.TenantAccessToken[tenantKey] = new(appconfig.TenantAccessTokenCache)
-		}
-		appToken.TenantAccessToken[tenantKey].Token = respBodyObj.TenantAccessToken
-		appToken.TenantAccessToken[tenantKey].Expire = time.Now().Unix() + int64(respBodyObj.Expire-ExpireInterval)
-
-		return respBodyObj.TenantAccessToken, nil
+	if respBodyObj == nil {
+		return "", common.ErrRespDataIsNil.Error()
 	}
 
-	return "", common.ErrRespDataIsNil.Error()
+	tokenManager.SetTenantAccessToken(tenantKey, respBodyObj.TenantAccessToken, respBodyObj.Expire)
+
+	common.Logger(ctx).Infof("SDK-Get-TenantAccessToken: getFormSvr success appID[%s]tenantKey[%s]tokenSize[%d]expireSecond[%d]",
+		appID, tenantKey, len(respBodyObj.TenantAccessToken), respBodyObj.Expire)
+
+	return respBodyObj.TenantAccessToken, nil
 }
 
 // ReSendAppTicket app-ticket will be pushed to this service when call this function
@@ -97,7 +87,7 @@ func ReSendAppTicket(ctx context.Context, appID, appSecret string) error {
 		AppSecret: appSecret,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.ResendAppTicketPath, nil, reqData)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.ResendAppTicketPath, nil, reqData)
 	if err != nil {
 		return common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -136,16 +126,14 @@ func RefreshAppTicket(ctx context.Context, data []byte) error {
 }
 
 func GetAppAccessToken(ctx context.Context, appID string) (string, error) {
-	appToken, err := appconfig.GetToken(appID)
+	tokenManager, err := appconfig.GetTokenManager(appID)
 	if err != nil {
 		return "", common.ErrAppTokenNotFound.ErrorWithExtErr(err)
 	}
 
-	if appToken.AppAccessToken != nil &&
-		appToken.AppAccessToken.Token != "" &&
-		appToken.AppAccessToken.Expire > time.Now().Unix() {
-
-		return appToken.AppAccessToken.Token, nil
+	cacheAppAccessToken, err := tokenManager.GetAppAccessToken()
+	if err == nil && cacheAppAccessToken != "" {
+		return cacheAppAccessToken, nil
 	}
 
 	appInfo, err := appconfig.GetConfig(appID)
@@ -186,11 +174,10 @@ func GetAppAccessToken(ctx context.Context, appID string) (string, error) {
 		expireSecond = rspData.Expire
 	}
 
-	if appToken.AppAccessToken == nil {
-		appToken.AppAccessToken = new(appconfig.AppAccessTokenCache)
-	}
-	appToken.AppAccessToken.Token = appAccessToken
-	appToken.AppAccessToken.Expire = time.Now().Unix() + int64(expireSecond-ExpireInterval)
+	tokenManager.SetAppAccessToken(appAccessToken, expireSecond)
+
+	common.Logger(ctx).Infof("SDK-Get-AppAccessToken: getFormSvr success appID[%s]tokenSize[%d]expireSecond[%d]",
+		appID, len(appAccessToken), expireSecond)
 
 	return appAccessToken, nil
 }
@@ -201,7 +188,7 @@ func getInternalTenantAccessToken(ctx context.Context, appID, appSecret string) 
 		AppSecret: appSecret,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenInternalPath, nil, reqData)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenInternalPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -224,7 +211,7 @@ func getIsvTenantAccessToken(ctx context.Context, tenantKey, appAccessToken stri
 		TenantKey:      tenantKey,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenIsvPath, nil, reqData)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenIsvPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -247,7 +234,7 @@ func getInternalAppAccessToken(ctx context.Context, appID, appSecret string) (*p
 		AppSecret: appSecret,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenInternalPath, nil, reqData)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenInternalPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -272,7 +259,7 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 		AppTicket: appTicket,
 	}
 
-	rspBytes, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenIsvPath, nil, reqData)
+	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenIsvPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -285,8 +272,8 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 
 	if rspData.Code != 0 {
 		var resultReSend string
-		if ErrAppTicketInvalid == rspData.Code {
-			appTicketManager.SetAppTicket(appID, "")
+		if protocol.ErrAppTicketInvalid == rspData.Code || protocol.ErrAppTicketNil == rspData.Code {
+			appTicketManager.SetAppTicket(appID, "") // disable app ticket
 
 			errReSend := ReSendAppTicket(ctx, appID, appSecret) // appTicket is invalid, resend appTicket
 			if errReSend != nil {
@@ -294,10 +281,50 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 			} else {
 				resultReSend = "ReSendAppTicketSucc"
 			}
+		} else {
+			resultReSend = "ReSendAppTicketDoNothing"
 		}
 
 		return nil, fmt.Errorf("oapiReturnError[code:%d msg:%s] %s", rspData.Code, rspData.Msg, resultReSend)
 	}
 
 	return rspData, nil
+}
+
+func CheckAndDisableTenantToken(ctx context.Context, appID string, tenantKey string, openAPIReturnCode int) {
+	if openAPIReturnCode == protocol.ErrTenantAccessTokenInvalid { //common error code
+
+		// openApi return ErrTenantAccessTokenInvalid, need disable local cache
+		DisableTenantToken(ctx, appID, tenantKey)
+	}
+}
+
+func DisableTenantToken(ctx context.Context, appID string, tenantKey string) {
+	tokenManager, err := appconfig.GetTokenManager(appID)
+	if err != nil {
+		common.Logger(ctx).Errorf("SDK-Disable-TenantAccessToken: appID[%s]tenantKey[%s], getManager error[%v]", appID, tenantKey, err)
+		return
+	}
+	tokenManager.DisableTenantAccessToken(tenantKey)
+
+	common.Logger(ctx).Infof("SDK-Disable-TenantAccessToken: appID[%s]tenantKey[%s], disable local cache success", appID, tenantKey)
+}
+
+func CheckAndDisableAppToken(ctx context.Context, appID string, openAPIReturnCode int) {
+	if openAPIReturnCode == protocol.ErrAppAccessTokenInvalid { //common error code
+
+		// openApi return ErrAppAccessTokenInvalid, need disable local cache
+		DisableAppToken(ctx, appID)
+	}
+}
+
+func DisableAppToken(ctx context.Context, appID string) {
+	tokenManager, err := appconfig.GetTokenManager(appID)
+	if err != nil {
+		common.Logger(ctx).Errorf("SDK-Disable-AppAccessToken: appID[%s], getManager error[%v]", appID, err)
+		return
+	}
+	tokenManager.DisableAppAccessToken()
+
+	common.Logger(ctx).Infof("SDK-Disable-AppAccessToken: appID[%s], disable local cache success", appID)
 }

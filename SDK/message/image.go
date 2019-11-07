@@ -51,6 +51,7 @@ func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (strin
 	} else {
 		cacheKey = url
 	}
+
 	if v, ok := LruCache.Get(cacheKey); ok {
 		imageKey := v.(string)
 		if imageKey != "" {
@@ -80,7 +81,8 @@ func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (strin
 		return "", err
 	}
 
-	addLruCache(url, rspData.Data.ImageKey)
+	addLruCache(cacheKey, rspData.Data.ImageKey)
+
 	return rspData.Data.ImageKey, nil
 }
 
@@ -93,7 +95,7 @@ func uploadImage(ctx context.Context, tenantKey, appID string, body *bytes.Buffe
 	header := map[string]string{"Authorization": authorization, "Content-Type": contentType}
 
 	reqURL := common.GetOpenPlatformHost() + string(protocol.UploadImagePath)
-	rspBytes, err := common.DoHttp("POST", reqURL, header, body)
+	rspBytes, _, err := common.DoHttp(common.HTTPMethodPost, reqURL, header, body)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -103,9 +105,12 @@ func uploadImage(ctx context.Context, tenantKey, appID string, body *bytes.Buffe
 	if err != nil {
 		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
+
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 
 }

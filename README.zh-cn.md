@@ -106,8 +106,8 @@ conf := &appconfig.AppConfig{
     AppID: os.Getenv("AppID"),//从飞书开放平台-凭证与基础信息中获取
     AppType: protocol.InternalApp, //apptype只有两种，Independent Software Vendor App 和 Internal App
     AppSecret:   os.Getenv("AppSecret"),//从飞书开放平台的凭证与基础信息中获取
-    VerifyToken: os.Getenv("VerifyToken"),//从飞书开放平台的事件订阅中获取
-    EncryptKey:  os.Getenv("EncryptKey"),//从飞书开放平台的事件订阅中获取
+    VerifyToken: os.Getenv("VerifyToken"),//从飞书开放平台的事件订阅中获取，开放平台事件订阅相关，如果没有使用事件订阅，可以填空字符串
+    EncryptKey:  os.Getenv("EncryptKey"),//从飞书开放平台的事件订阅中获取，开放平台事件订阅相关，如果没有使用事件订阅，可以填空字符串
 }
 ```  
 

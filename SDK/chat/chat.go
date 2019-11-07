@@ -16,7 +16,7 @@ import (
 
 func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*protocol.GetGroupInfoResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || chatID == "" {
+	if appID == "" || chatID == "" {
 		return nil, common.ErrChatParams.ErrorWithExtStr("param is empty or is nil")
 	}
 
@@ -25,7 +25,7 @@ func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken),
+	rspBytes, _, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken),
 		protocol.GenGetGroupInfoRequest(chatID))
 
 	if err != nil {
@@ -39,14 +39,16 @@ func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*
 	}
 
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }
 
 func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pageToken string) (*protocol.GetGroupListResponse, error) {
 	// check params
-	if tenantKey == "" || appID == "" || pageSize <= 0 || pageSize > 200 {
+	if appID == "" || pageSize <= 0 || pageSize > 200 {
 		return nil, common.ErrChatParams.ErrorWithExtStr("param is empty or is invalid")
 	}
 
@@ -55,7 +57,7 @@ func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pag
 		return nil, err
 	}
 
-	rspBytes, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken),
+	rspBytes, _, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken),
 		protocol.GenGetGroupListRequest(pageSize, pageToken))
 
 	if err != nil {
@@ -69,7 +71,9 @@ func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pag
 	}
 
 	if rspData.Code != 0 {
-		return nil, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
+		auth.CheckAndDisableTenantToken(ctx, appID, tenantKey, rspData.Code)
+		return rspData, common.ErrOpenApiReturnError.ErrorWithExtStr(fmt.Sprintf("[code:%d msg:%s]", rspData.Code, rspData.Msg))
 	}
+
 	return rspData, nil
 }

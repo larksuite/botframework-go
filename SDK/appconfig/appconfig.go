@@ -4,11 +4,19 @@
 
 package appconfig
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 var (
-	appConfMap  = make(map[string]AppConfig)
-	appTokenMap = make(map[string]*AppToken)
+	appConfMap = make(map[string]AppConfig)
+
+	appTokenMap = make(map[string]*AppTokenManager)
+)
+
+const (
+	ExpireInterval = 300 // 300 seconds
 )
 
 type AppConfig struct {
@@ -19,7 +27,7 @@ type AppConfig struct {
 	AppType     string `json:"app_type"`
 }
 
-type AppToken struct {
+type AppTokenManager struct {
 	AppAccessToken    *AppAccessTokenCache
 	TenantAccessToken map[string]*TenantAccessTokenCache //tenantKey->tenantAccessToken
 }
@@ -34,11 +42,68 @@ type TenantAccessTokenCache struct {
 	Expire int64
 }
 
+func (a *AppTokenManager) GetAppAccessToken() (string, error) {
+	if a.AppAccessToken != nil && a.AppAccessToken.Token != "" && a.AppAccessToken.Expire > time.Now().Unix() {
+		return a.AppAccessToken.Token, nil
+	}
+
+	return "", fmt.Errorf("cannot find app access token")
+}
+
+func (a *AppTokenManager) SetAppAccessToken(appAccessToken string, expireSecond int) error {
+	if a.AppAccessToken == nil {
+		a.AppAccessToken = new(AppAccessTokenCache)
+	}
+	a.AppAccessToken.Token = appAccessToken
+	a.AppAccessToken.Expire = time.Now().Unix() + int64(expireSecond-ExpireInterval)
+
+	return nil
+}
+
+func (a *AppTokenManager) DisableAppAccessToken() error {
+	if a.AppAccessToken != nil {
+		a.AppAccessToken.Expire = 0
+	}
+
+	return nil
+}
+
+func (a *AppTokenManager) GetTenantAccessToken(tenantKey string) (string, error) {
+	tcToken, ok := a.TenantAccessToken[tenantKey]
+	if ok && tcToken != nil && tcToken.Token != "" && tcToken.Expire > time.Now().Unix() {
+		return tcToken.Token, nil
+	}
+
+	return "", fmt.Errorf("cannot find tenant access token")
+}
+
+func (a *AppTokenManager) SetTenantAccessToken(tenantKey string, tenantAccessToken string, expireSecond int) error {
+	if a.TenantAccessToken == nil {
+		a.TenantAccessToken = make(map[string]*TenantAccessTokenCache)
+	}
+	if a.TenantAccessToken[tenantKey] == nil {
+		a.TenantAccessToken[tenantKey] = new(TenantAccessTokenCache)
+	}
+
+	a.TenantAccessToken[tenantKey].Token = tenantAccessToken
+	a.TenantAccessToken[tenantKey].Expire = time.Now().Unix() + int64(expireSecond-ExpireInterval)
+
+	return nil
+}
+
+func (a *AppTokenManager) DisableTenantAccessToken(tenantKey string) error {
+	if a.TenantAccessToken != nil && a.TenantAccessToken[tenantKey] != nil {
+		a.TenantAccessToken[tenantKey].Expire = 0
+	}
+
+	return nil
+}
+
 func Init(appConfs ...AppConfig) {
 	for _, v := range appConfs {
 		appConfMap[v.AppID] = v
 
-		appTokenMap[v.AppID] = &AppToken{
+		appTokenMap[v.AppID] = &AppTokenManager{
 			AppAccessToken:    &AppAccessTokenCache{},
 			TenantAccessToken: make(map[string]*TenantAccessTokenCache),
 		}
@@ -54,11 +119,11 @@ func GetConfig(appID string) (AppConfig, error) {
 	return appConf, nil
 }
 
-func GetToken(appID string) (*AppToken, error) {
-	appToken, ok := appTokenMap[appID]
+func GetTokenManager(appID string) (*AppTokenManager, error) {
+	tokenManager, ok := appTokenMap[appID]
 	if !ok {
-		return nil, fmt.Errorf("getAppToken: cannot find appToken, appid[%s]tokenSize[%d]", appID, len(appTokenMap))
+		return nil, fmt.Errorf("getAppToken: cannot find tokenManager, appid[%s]tokenSize[%d]", appID, len(appTokenMap))
 	}
 
-	return appToken, nil
+	return tokenManager, nil
 }

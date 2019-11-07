@@ -94,7 +94,7 @@ ImageTag := protocol.TextForm{
 }
 
 //获取imageKey，可以在 docs/zh/send_message.md/机器人发送图片消息 查看imagekey的详细说明
-imageURL := "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/ed/ee/c0/edeec03e-d111-ac8d-3441-409acd11dbea/source/512x512bb.jpg"
+imageURL := "https://s0.pstatp.com/ee/lark-open/web/static/apply.226f11cb.png"
 imageKey, err := message.GetImageKey(ctx, tenantKey, appID, imageURL, "")
 if err != nil {
    return fmt.Errorf("get imageKey failed[%v]", err)
@@ -223,6 +223,54 @@ builder.AddActionBlock([]protocol.ActionElement{
 )
 ```
   
+##### 延迟更新卡片  
+业务方使用交互返回的 token 凭证，在30分钟内最多更新两次卡片。  
+除正常卡片内容外，还有 open_ids 字段控制更新指定用户的消息卡片，字段值为用户 openId 数组。  
+示例代码如下：  
+```go
+// use message.UpdateCard function to update card
+func UpdateCard(token,tenantkey,appid,openid string)(error){
+    //token可以在交互模块回调时获得
+
+	//build a new card
+	builder := &message.CardBuilder{}
+	//add config
+	config := protocol.ConfigForm{
+		MinVersion:     protocol.VersionForm{},
+		WideScreenMode: true,
+	}
+	builder.SetConfig(config)
+
+	//add header
+	content := "this is a card"
+	line := 1
+	title := protocol.TextForm{
+		Tag:     protocol.PLAIN_TEXT_E,
+		Content: &content,
+		Lines:   &line,
+	}
+	builder.AddHeader(title, "")
+
+	builder.AddDIVBlock(nil, []protocol.FieldForm{
+		*message.NewField(false, message.NewMDText("updatecard by message.UpdateCard", nil, nil, nil)),
+	}, nil)
+
+	card, err := builder.BuildForm()
+	if err != nil {
+		return fmt.Errorf("build card failed error[%v]", err)
+	}
+
+	// card.OpenIDs can't be nil.
+	card.OpenIDs=[]string{openid}
+
+	_,err = message.UpdateCard(context.TODO(),tenantkey,appid,token,*card)
+	if err != nil{
+		return fmt.Errorf("card update failed error[%v]", err)
+	}
+	return nil
+}
+```
+
 ### 发送卡片 demo  
 [demo code](../../demo/send_card/send_card.go)   
 该示例代码实现了卡片内增加内容模块、分割线、图片模块、交互模块、备注模块等，可供开发者参考。  
