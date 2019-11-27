@@ -56,8 +56,8 @@ var (
 	// 3. message 3000 - 3999
 	ErrSendMsgParams     = &ErrCodeMsg{Code: 3000, Message: "send msg params error"}
 	ErrPostFormParams    = &ErrCodeMsg{Code: 3001, Message: "postform params error"}
-	ErrImageParams       = &ErrCodeMsg{Code: 3001, Message: "postform params error"}
-	ErrGenBinImageFailed = &ErrCodeMsg{Code: 3001, Message: "generate binary image error"}
+	ErrImageParams       = &ErrCodeMsg{Code: 3002, Message: "postform params error"}
+	ErrGenBinImageFailed = &ErrCodeMsg{Code: 3003, Message: "generate binary image error"}
 
 	ErrCardUpdateParams = &ErrCodeMsg{Code: 3100, Message: "update card params error"}
 
