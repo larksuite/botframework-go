@@ -209,7 +209,7 @@ func TestSendCardMessage(t *testing.T) {
 }
 
 //need to get access
-func TestSendTextMessageBatch(t *testing.T) {
+func TestBatchSendTextMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
 
@@ -228,7 +228,7 @@ func TestSendTextMessageBatch(t *testing.T) {
 }
 
 //need to get access
-func TestSendImageMessageBatch(t *testing.T) {
+func TestBatchSendImageMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
 
@@ -267,7 +267,7 @@ func TestSendImageMessageBatch(t *testing.T) {
 }
 
 //need to get access
-func TestSendRichTextMessageBatch(t *testing.T) {
+func TestBatchSendRichTextMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
 
@@ -326,7 +326,7 @@ func TestSendRichTextMessageBatch(t *testing.T) {
 }
 
 //need to get access
-func TestSendShareChatMessageBatch(t *testing.T) {
+func TestBatchSendShareChatMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
 	info := &protocol.BatchBaseInfo{
@@ -343,7 +343,7 @@ func TestSendShareChatMessageBatch(t *testing.T) {
 }
 
 //need to get access
-func TestSendCardMessageBatch(t *testing.T) {
+func TestBatchSendCardMessage(t *testing.T) {
 	c := context.Background()
 	InitTestParams()
 

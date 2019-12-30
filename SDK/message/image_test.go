@@ -6,6 +6,7 @@ package message_test
 
 import (
 	"context"
+	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
@@ -22,6 +23,7 @@ var (
 	openID    string
 	userID    string
 	imageKey  string
+	messageID string
 )
 
 func InitTestParams() {
@@ -41,6 +43,8 @@ func InitTestParams() {
 
 		imageKey = os.Getenv("imagekey")
 
+		messageID = os.Getenv("messageid")
+
 		appconfig.Init(*appConf)
 	})
 }
@@ -55,7 +59,7 @@ func TestGetImageKey(t *testing.T) {
 	if err != nil {
 		t.Errorf("GetImageKeyByPath failed: %v", err)
 	} else {
-		t.Logf("GetImageKeyByPath: %+v", key)
+		t.Logf("GetImageKeyByPath: image_key = %s", key)
 	}
 
 	// by url
@@ -64,6 +68,26 @@ func TestGetImageKey(t *testing.T) {
 	if err != nil {
 		t.Errorf("GetImageKeyByURL failed: %v", err)
 	} else {
-		t.Logf("GetImageKeyByURL: %+v", key)
+		t.Logf("GetImageKeyByURL: image_key = %s", key)
 	}
+}
+
+func TestGetImageBinData(t *testing.T) {
+	c := context.Background()
+	InitTestParams()
+
+	data, err := message.GetImageBinData(c, tenantKey, appConf.AppID, imageKey)
+	if err != nil {
+		t.Errorf("GetImageBinData failed: %v", err)
+	} else {
+		t.Logf("GetImageBinData: succ")
+	}
+
+	err = ioutil.WriteFile("./temp.jpg", data, 0644)
+	if err != nil {
+		t.Errorf("WriteFile failed: %v", err)
+	} else {
+		t.Logf("WriteFile: succ")
+	}
+
 }

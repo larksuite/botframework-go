@@ -40,6 +40,7 @@ var (
 	ErrOpenApiFailed      = &ErrCodeMsg{Code: 1002, Message: "open api failed"}
 	ErrOpenApiReturnError = &ErrCodeMsg{Code: 1003, Message: "open api return error"}
 	ErrAppConfNotFound    = &ErrCodeMsg{Code: 1004, Message: "app config not found"}
+	ErrHttpCode           = &ErrCodeMsg{Code: 1005, Message: "http return not 200 "}
 
 	// 2. auth 2000 - 2999
 	ErrAppTokenNotFound             = &ErrCodeMsg{Code: 2000, Message: "auth app token not found"}
@@ -54,15 +55,23 @@ var (
 	ErrSetAppTicketFailed           = &ErrCodeMsg{Code: 2009, Message: "auth set app ticket failed"}
 
 	// 3. message 3000 - 3999
-	ErrSendMsgParams     = &ErrCodeMsg{Code: 3000, Message: "send msg params error"}
-	ErrPostFormParams    = &ErrCodeMsg{Code: 3001, Message: "postform params error"}
-	ErrImageParams       = &ErrCodeMsg{Code: 3002, Message: "postform params error"}
-	ErrGenBinImageFailed = &ErrCodeMsg{Code: 3003, Message: "generate binary image error"}
+	ErrSendMsgParams         = &ErrCodeMsg{Code: 3000, Message: "send msg params error"}
+	ErrPostFormParams        = &ErrCodeMsg{Code: 3001, Message: "postform params error"}
+	ErrImageParams           = &ErrCodeMsg{Code: 3002, Message: "get_imagekey params error"}
+	ErrGenBinImageFailed     = &ErrCodeMsg{Code: 3003, Message: "generate binary image error"}
+	ErrGetImageBinDataParams = &ErrCodeMsg{Code: 3004, Message: "get_image_bin_data params error"}
+	ErrCardUpdateParams      = &ErrCodeMsg{Code: 3100, Message: "update card params error"}
 
-	ErrCardUpdateParams = &ErrCodeMsg{Code: 3100, Message: "update card params error"}
-
-	// 4. chat 4000 - 4999
-	ErrChatParams = &ErrCodeMsg{Code: 4000, Message: "chat params error"}
+	// 4. chat and bot 4000 - 4999
+	ErrChatParams               = &ErrCodeMsg{Code: 4000, Message: "chat params error"}
+	ErrCreateChatParams         = &ErrCodeMsg{Code: 4001, Message: "create chat params error"}
+	ErrUpdateChatInfoParams     = &ErrCodeMsg{Code: 4002, Message: "update chat info params error"}
+	ErrAddUserToChatParams      = &ErrCodeMsg{Code: 4003, Message: "add user to chat params error"}
+	ErrDeleteUserFromChatParams = &ErrCodeMsg{Code: 4004, Message: "delete user from chat params error"}
+	ErrDisbandChatParams        = &ErrCodeMsg{Code: 4005, Message: "disband chat params error"}
+	ErrGetBotInfoParams         = &ErrCodeMsg{Code: 4006, Message: "getBotInfo  params error"}
+	ErrAddBotToChatParams       = &ErrCodeMsg{Code: 4007, Message: "addBotToChat  params error"}
+	ErrRemoveBotFromChatParams  = &ErrCodeMsg{Code: 4008, Message: "removeBotFromChat  params error"}
 
 	// 5. event 5000 - 5999
 	ErrEventTypeRegister      = &ErrCodeMsg{Code: 5000, Message: "event type register handler error"}

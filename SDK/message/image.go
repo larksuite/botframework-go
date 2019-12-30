@@ -76,7 +76,7 @@ func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (strin
 		}
 	}
 
-	rspData, err := uploadImage(ctx, tenantKey, appID, body, contentType)
+	rspData, err := UploadImage(ctx, tenantKey, appID, body, contentType)
 	if err != nil {
 		return "", err
 	}
@@ -86,7 +86,32 @@ func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (strin
 	return rspData.Data.ImageKey, nil
 }
 
-func uploadImage(ctx context.Context, tenantKey, appID string, body *bytes.Buffer, contentType string) (*protocol.UpLoadImageResponse, error) {
+func GetImageBinData(ctx context.Context, tenantKey, appID, imageKey string) ([]byte, error) {
+	if appID == "" || imageKey == "" {
+		return nil, common.ErrGetImageBinDataParams.ErrorWithExtStr("param is empty")
+	}
+
+	accessToken, err := auth.GetTenantAccessToken(ctx, tenantKey, appID)
+	if err != nil {
+		return nil, err
+	}
+
+	rspBytes, httpCode, err := common.DoHttpGetOApi(protocol.GetImagePath,
+		map[string]string{"Authorization": fmt.Sprintf("Bearer %s", accessToken)},
+		map[string]string{"image_key": imageKey},
+	)
+	if err != nil {
+		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
+	}
+
+	if httpCode != common.HTTPCodeOK {
+		return nil, common.ErrHttpCode.ErrorWithExtStr(fmt.Sprintf("httpCode[%d]httpRspBody[%s]", httpCode, string(rspBytes)))
+	}
+
+	return rspBytes, nil
+}
+
+func UploadImage(ctx context.Context, tenantKey, appID string, body *bytes.Buffer, contentType string) (*protocol.UpLoadImageResponse, error) {
 	accessToken, err := auth.GetTenantAccessToken(ctx, tenantKey, appID)
 	if err != nil {
 		return nil, err

@@ -65,6 +65,11 @@
 - CheckUserInGroup
 - CheckBotInGroup
 - CheckUserBotInSameGroup
+- UpdateChatInfo
+- CreateChat
+- AddUserToChat
+- DeleteUserFromChat
+- DisbandChat
 
 ## 消息构造
 - 富文本构造

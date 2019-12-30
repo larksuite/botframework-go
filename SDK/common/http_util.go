@@ -28,6 +28,11 @@ const (
 	HTTPMethodTrace   = "TRACE"
 )
 
+// Common HTTP status code.
+const (
+	HTTPCodeOK = 200
+)
+
 // DoHttpPostOApi open platform POST http
 func DoHttpPostOApi(path protocol.OpenApiPath, headers map[string]string, data interface{}) ([]byte, int, error) {
 	reqBody := new(bytes.Buffer)

@@ -162,6 +162,18 @@ func TestAuthTenantToken(t *testing.T) {
 
 }
 
+func TestReSendAppTicket(t *testing.T) {
+	ctx := context.Background()
+	initTestParams()
+
+	err := auth.ReSendAppTicket(ctx, appConf.AppID, appConf.AppSecret)
+	if err != nil {
+		t.Errorf("Test_ReSendAppTicket Failed: getToken error[%v]", err)
+		return
+	}
+	t.Logf("Test_ReSendAppTicket Success")
+}
+
 func TestAutoDisableTenantToken(t *testing.T) {
 	ctx := context.Background()
 	initTestParams()

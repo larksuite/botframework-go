@@ -65,6 +65,11 @@ Interfaces
 - CheckUserInGroup
 - CheckBotInGroup
 - CheckUserBotInSameGroup
+- UpdateChatInfo
+- CreateChat
+- AddUserToChat
+- DeleteUserFromChat
+- DisbandChat
 
 ## Message Builder
 - Richtext Builder
