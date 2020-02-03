@@ -24,46 +24,55 @@ import (
 
 type EventHandler func(ctx context.Context, eventBody []byte) error
 
-var (
-	appID2TypeHandler = make(map[string]map[string]EventHandler) // [app_id][eventType][function]
-)
+type EventHandlerManager struct {
+	mapHandler map[string]map[string]EventHandler //[app_id][eventType][function]
+}
 
-func EventRegister(appID, eventType string, eventHandler EventHandler) error {
-	// 参数校验
-	if appID == "" {
-		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("app id is empty. AppID[%s]EventType[%s]", appID, eventType))
-	}
-	if eventType == "" {
-		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("event type is empty. AppID[%s]EventType[%s]", appID, eventType))
-	}
+func (a *EventHandlerManager) Set(appID, eventTypeList string, eventHandler EventHandler) {
 	if eventHandler == nil {
-		return common.ErrEventTypeRegister.ErrorWithExtStr(fmt.Sprintf("event handler is nil. AppID[%s]EventType[%s]", appID, eventType))
+		return
 	}
 
-	if appID2TypeHandler == nil {
-		return common.ErrEventManagerNotInit.Error()
+	if m, ok := a.mapHandler[appID]; !ok || m == nil {
+		a.mapHandler[appID] = make(map[string]EventHandler, 0)
 	}
 
-	if typeHandler, ok := appID2TypeHandler[appID]; ok {
-		if typeHandler == nil {
-			typeHandler = make(map[string]EventHandler)
-			appID2TypeHandler[appID] = typeHandler
-		}
-
-		s := strings.Split(strings.Trim(eventType, " "), ",")
-		for _, v := range s {
-			typeHandler[v] = eventHandler
-		}
-
-	} else {
-		typeHandler = make(map[string]EventHandler)
-		appID2TypeHandler[appID] = typeHandler
-
-		s := strings.Split(strings.Trim(eventType, " "), ",")
-		for _, v := range s {
-			typeHandler[v] = eventHandler
-		}
+	s := strings.Split(strings.Trim(eventTypeList, " "), ",")
+	for _, eventType := range s {
+		a.mapHandler[appID][eventType] = eventHandler
 	}
+}
+
+func (a *EventHandlerManager) Get(appID string, eventType string) (EventHandler, error) {
+	if _, ok := a.mapHandler[appID]; !ok {
+		return nil, common.ErrEventAppIDUnregistered.ErrorWithExtStr(fmt.Sprintf("appid[%s]eventType[%s]", appID, eventType))
+	}
+	if _, ok := a.mapHandler[appID][eventType]; !ok {
+		return nil, common.ErrEventTypeUnregistered.ErrorWithExtStr(fmt.Sprintf("appid[%s]eventType[%s]", appID, eventType))
+	}
+	if a.mapHandler[appID][eventType] == nil {
+		return nil, common.ErrEventHandlerIsNil.ErrorWithExtStr(fmt.Sprintf("appid[%s]eventType[%s]", appID, eventType))
+	}
+
+	return a.mapHandler[appID][eventType], nil
+}
+
+var eventManager *EventHandlerManager
+
+func init() {
+	eventManager = &EventHandlerManager{
+		mapHandler: make(map[string]map[string]EventHandler, 0),
+	}
+}
+
+func EventRegister(appID, eventTypeList string, eventHandler EventHandler) error {
+	// 参数校验
+	if appID == "" || eventTypeList == "" || eventHandler == nil {
+		return common.ErrEventTypeRegister.ErrorWithExtStr(
+			fmt.Sprintf("params is empty or nil. AppID[%s]EventType[%s]HandlerIsNil[%t]", appID, eventTypeList, eventHandler == nil))
+	}
+
+	eventManager.Set(appID, eventTypeList, eventHandler)
 
 	return nil
 }
@@ -148,18 +157,9 @@ func eventCallbackHandler(ctx context.Context, appID, content string) error {
 	}
 
 	// dispatch event type
-	var eventHandler map[string]EventHandler
-	var handler EventHandler
-	var ok bool
-
-	if eventHandler, ok = appID2TypeHandler[appID]; !ok {
-		return common.ErrEventAppIDUnregistered.ErrorWithExtStr(fmt.Sprintf("AppID[%s]", appID))
-	}
-	if handler, ok = eventHandler[eventType]; !ok {
-		return common.ErrEventTypeUnregistered.ErrorWithExtStr(fmt.Sprintf("EventType[%s]", eventType))
-	}
-	if handler == nil {
-		return common.ErrEventHandlerIsNil.ErrorWithExtStr(fmt.Sprintf("AppID[%s]EventType[%s]", appID, eventType))
+	handler, err := eventManager.Get(appID, eventType)
+	if err != nil {
+		return err
 	}
 
 	byteEvent, err := jsonEvent.MarshalJSON()

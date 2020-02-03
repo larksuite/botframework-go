@@ -4,6 +4,8 @@
 
 package protocol
 
+import "context"
+
 type UserInfo struct {
 	ID   string
 	Type UserType
@@ -130,17 +132,24 @@ type RichTextElementForm struct {
 	UserID string `json:"user_id,omitempty" validate:"omitempty"`
 }
 
+type ImageType string
+
+const (
+	MessageImageType ImageType = "message"
+	AvatarImageType  ImageType = "avatar"
+)
+
 type UpLoadImageResponse struct {
 	BaseResponse
 	Data struct {
 		ImageKey string `json:"image_key,omitempty" validate:"omitempty"`
-		Url      string `json:"url,omitempty" validate:"omitempty"`
 	} `json:"data,omitempty" validate:"omitempty"`
 }
 
 type SendMsgRequest struct {
 	BaseInfo
 
+	UUID    *string        `json:"uuid,omitempty" validate:"omitempty"` // use it by call func SetUUIDToContext
 	MsgType string         `json:"msg_type,omitempty" validate:"required"`
 	Content MessageContent `json:"content,omitempty" validate:"required"`
 }
@@ -174,14 +183,10 @@ type SendMsgBatchResponse struct {
 type SendCardMsgRequest struct {
 	BaseInfo
 
-	UUID        string   `json:"uuid,omitempty" validate:"omitempty"`
+	UUID        *string  `json:"uuid,omitempty" validate:"omitempty"` // use it by call func SetUUIDToContext
 	MsgType     string   `json:"msg_type,omitempty" validate:"required"`
 	Card        CardForm `json:"card,omitempty" validate:"omitempty"`
 	UpdateMulti bool     `json:"update_multi" validate:"omitempty"`
-}
-
-func (s *SendCardMsgRequest) SetUUID(UUID string) {
-	s.UUID = UUID
 }
 
 type SendCardMsgResponse struct {
@@ -335,4 +340,19 @@ func NewBatchCardMsgReq(info *BatchBaseInfo, rootID string, card CardForm, updat
 	request.UserIDs = info.UserIDs
 
 	return request
+}
+
+func SetUUIDToContext(ctx context.Context, uuid string) context.Context {
+	if len(uuid) > 0 {
+		ctx = context.WithValue(ctx, "botframework_uuid", uuid)
+	}
+	return ctx
+}
+
+func GetUUIDFromContext(ctx context.Context) string {
+	uuid, ok := ctx.Value("botframework_uuid").(string)
+	if ok && len(uuid) > 0 {
+		return uuid
+	}
+	return ""
 }

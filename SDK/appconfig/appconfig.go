@@ -6,6 +6,7 @@ package appconfig
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -30,6 +31,8 @@ type AppConfig struct {
 type AppTokenManager struct {
 	AppAccessToken    *AppAccessTokenCache
 	TenantAccessToken map[string]*TenantAccessTokenCache //tenantKey->tenantAccessToken
+	rwMuApp           sync.RWMutex
+	rwMuTenant        sync.RWMutex
 }
 
 type AppAccessTokenCache struct {
@@ -43,6 +46,9 @@ type TenantAccessTokenCache struct {
 }
 
 func (a *AppTokenManager) GetAppAccessToken() (string, error) {
+	a.rwMuApp.RLock()
+	defer a.rwMuApp.RUnlock()
+
 	if a.AppAccessToken != nil && a.AppAccessToken.Token != "" && a.AppAccessToken.Expire > time.Now().Unix() {
 		return a.AppAccessToken.Token, nil
 	}
@@ -51,6 +57,9 @@ func (a *AppTokenManager) GetAppAccessToken() (string, error) {
 }
 
 func (a *AppTokenManager) SetAppAccessToken(appAccessToken string, expireSecond int) error {
+	a.rwMuApp.Lock()
+	defer a.rwMuApp.Unlock()
+
 	if a.AppAccessToken == nil {
 		a.AppAccessToken = new(AppAccessTokenCache)
 	}
@@ -61,6 +70,9 @@ func (a *AppTokenManager) SetAppAccessToken(appAccessToken string, expireSecond 
 }
 
 func (a *AppTokenManager) DisableAppAccessToken() error {
+	a.rwMuApp.Lock()
+	defer a.rwMuApp.Unlock()
+
 	if a.AppAccessToken != nil {
 		a.AppAccessToken.Expire = 0
 	}
@@ -69,6 +81,9 @@ func (a *AppTokenManager) DisableAppAccessToken() error {
 }
 
 func (a *AppTokenManager) GetTenantAccessToken(tenantKey string) (string, error) {
+	a.rwMuTenant.RLock()
+	defer a.rwMuTenant.RUnlock()
+
 	tcToken, ok := a.TenantAccessToken[tenantKey]
 	if ok && tcToken != nil && tcToken.Token != "" && tcToken.Expire > time.Now().Unix() {
 		return tcToken.Token, nil
@@ -78,6 +93,9 @@ func (a *AppTokenManager) GetTenantAccessToken(tenantKey string) (string, error)
 }
 
 func (a *AppTokenManager) SetTenantAccessToken(tenantKey string, tenantAccessToken string, expireSecond int) error {
+	a.rwMuTenant.Lock()
+	defer a.rwMuTenant.Unlock()
+
 	if a.TenantAccessToken == nil {
 		a.TenantAccessToken = make(map[string]*TenantAccessTokenCache)
 	}
@@ -92,6 +110,9 @@ func (a *AppTokenManager) SetTenantAccessToken(tenantKey string, tenantAccessTok
 }
 
 func (a *AppTokenManager) DisableTenantAccessToken(tenantKey string) error {
+	a.rwMuTenant.Lock()
+	defer a.rwMuTenant.Unlock()
+
 	if a.TenantAccessToken != nil && a.TenantAccessToken[tenantKey] != nil {
 		a.TenantAccessToken[tenantKey].Expire = 0
 	}

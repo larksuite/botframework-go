@@ -26,6 +26,7 @@ func (p *CommandHandlerManager) Set(appID string, cmdName string, handler Handle
 	if handler == nil {
 		return
 	}
+
 	if _, ok := p.mapHandler[appID]; !ok {
 		p.mapHandler[appID] = make(map[string]HandlerBotMsg, 0)
 	}

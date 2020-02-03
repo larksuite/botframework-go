@@ -241,6 +241,13 @@ func sendMsg(ctx context.Context,
 		return nil, err
 	}
 
+	if request.UUID == nil {
+		UUID := protocol.GetUUIDFromContext(ctx)
+		if UUID != "" {
+			request.UUID = &UUID
+		}
+	}
+
 	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
@@ -271,6 +278,13 @@ func sendCardMsg(ctx context.Context,
 	accessToken, err := auth.GetTenantAccessToken(ctx, tenantKey, appID)
 	if err != nil {
 		return nil, err
+	}
+
+	if request.UUID == nil {
+		UUID := protocol.GetUUIDFromContext(ctx)
+		if UUID != "" {
+			request.UUID = &UUID
+		}
 	}
 
 	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)

@@ -27,7 +27,8 @@ func (a *ActionHandlerManager) Set(appID string, method string, v ActionMethod) 
 	if v == nil {
 		return
 	}
-	if _, ok := a.mapHandler[appID]; !ok {
+
+	if m, ok := a.mapHandler[appID]; !ok || m == nil {
 		a.mapHandler[appID] = make(map[string]ActionMethod, 0)
 	}
 
@@ -48,17 +49,13 @@ func (a *ActionHandlerManager) Get(appID string, method string) (ActionMethod, e
 var cardHandler *ActionHandlerManager
 
 func init() {
-	cardHandler = &ActionHandlerManager{mapHandler: make(map[string]map[string]ActionMethod, 0)}
+	cardHandler = &ActionHandlerManager{
+		mapHandler: make(map[string]map[string]ActionMethod, 0),
+		ignoreSign: make(map[string]bool, 0),
+	}
 }
 
 func IgnoreSign(appid string, ignore bool) {
-	if cardHandler == nil {
-		return
-	}
-	if cardHandler.ignoreSign == nil {
-		cardHandler.ignoreSign = make(map[string]bool, 0)
-	}
-
 	cardHandler.ignoreSign[appid] = ignore
 }
 

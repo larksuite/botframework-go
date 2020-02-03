@@ -38,7 +38,7 @@ func init() {
 	}
 }
 
-// GetImageKey: get imagekey
+// GetImageKey: get imagekey, image_type = message
 func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (string, error) {
 	if url == "" && path == "" {
 		return "", common.ErrImageParams.Error()
@@ -61,16 +61,17 @@ func GetImageKey(ctx context.Context, tenantKey, appID, url, path string) (strin
 	}
 
 	// upload image
+	imageType := protocol.MessageImageType
 	var body *bytes.Buffer
 	var contentType string
 	var err error
 	if path != "" {
-		body, contentType, err = genBinaryImageByPath(path)
+		body, contentType, err = GenBinaryImageByPath(path, imageType)
 		if err != nil {
 			return "", common.ErrGenBinImageFailed.ErrorWithExtErr(err)
 		}
 	} else {
-		body, contentType, err = genBinaryImageByUrl(url)
+		body, contentType, err = GenBinaryImageByUrl(url, imageType)
 		if err != nil {
 			return "", common.ErrGenBinImageFailed.ErrorWithExtErr(err)
 		}
@@ -140,7 +141,7 @@ func UploadImage(ctx context.Context, tenantKey, appID string, body *bytes.Buffe
 
 }
 
-func genBinaryImageByPath(path string) (*bytes.Buffer, string, error) {
+func GenBinaryImageByPath(path string, imageType protocol.ImageType) (*bytes.Buffer, string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, "", fmt.Errorf("open file error[%v]", err)
@@ -157,6 +158,8 @@ func genBinaryImageByPath(path string) (*bytes.Buffer, string, error) {
 	if err != nil {
 		return nil, "", fmt.Errorf("io copy error[%v]", err)
 	}
+
+	writer.WriteField("image_type", string(imageType))
 	err = writer.Close()
 	if err != nil {
 		return nil, "", fmt.Errorf("writer close error[%v]", err)
@@ -166,7 +169,7 @@ func genBinaryImageByPath(path string) (*bytes.Buffer, string, error) {
 	return buffer, contentType, nil
 }
 
-func genBinaryImageByUrl(url string) (*bytes.Buffer, string, error) {
+func GenBinaryImageByUrl(url string, imageType protocol.ImageType) (*bytes.Buffer, string, error) {
 	imageBytes, err := downloadImage(url)
 	if err != nil {
 		return nil, "", fmt.Errorf("download image error[%v]", err)
@@ -188,6 +191,8 @@ func genBinaryImageByUrl(url string) (*bytes.Buffer, string, error) {
 	if err != nil {
 		return nil, "", fmt.Errorf("io copy error[%v]", err)
 	}
+
+	writer.WriteField("image_type", string(imageType))
 	err = writer.Close()
 	if err != nil {
 		return nil, "", fmt.Errorf("writer close error[%v]", err)

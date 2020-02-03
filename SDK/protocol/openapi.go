@@ -14,7 +14,7 @@ const (
 	ResendAppTicketPath              OpenApiPath = "/open-apis/auth/v3/app_ticket/resend"
 	SendMessagePath                  OpenApiPath = "/open-apis/message/v4/send/"
 	SendMessageBatchPath             OpenApiPath = "/open-apis/message/v4/batch_send/"
-	UploadImagePath                  OpenApiPath = "/open-apis/image/v4/upload/"
+	UploadImagePath                  OpenApiPath = "/open-apis/image/v4/put/"
 	GetImagePath                     OpenApiPath = "/open-apis/image/v4/get"
 	GetChatInfoPath                  OpenApiPath = "/open-apis/chat/v4/info/"
 	GetChatListPath                  OpenApiPath = "/open-apis/chat/v4/list/"
