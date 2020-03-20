@@ -34,6 +34,7 @@ const (
 	EventTypeOrderPaid            = "order_paid"                                                       // notification--order_paid
 	EventTypeCreateWidgetInstance = "create_widget_instance"                                           // notification--create_widget_instance
 	EventTypeDeleteWidgetInstance = "delete_widget_instance"                                           // notification--delete_widget_instance
+	EventTypeMessageRead          = "message_read"                                                     // notification--message_read
 )
 
 const (
@@ -375,6 +376,14 @@ type DeleteWidgetInstanceEvent struct {
 	BaseEvent
 
 	InstanceId []string `json:"instance_id"`
+}
+
+type MessageReadEvent struct {
+	BaseEvent
+
+	OpenChatID     string   `json:"open_chat_id"`
+	OpenID         string   `json:"open_id"`
+	OpenMessageIDs []string `json:"open_message_ids"`
 }
 
 // url challenge

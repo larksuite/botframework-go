@@ -30,6 +30,7 @@ List of supported notification
 - Order paid
 - Create a widget instance event
 - Delete a widget instance event
+- Read message
 
 ## Authorization
 Obtain tenant_access_token (ISV apps or internal apps)
@@ -142,22 +143,29 @@ ServiceInfo:
   Description: test_demo      # your app description
   IsISVApp: false             # ISV App flag, false is default
 EventList:
-  - EventName: Message           # required
-  # - EventName: AppTicket       # use as needed, ISVApp must
-  # - EventName: Approval        # use as needed
-  # - EventName: LeaveApproval   # use as needed
-  # - EventName: WorkApproval    # use as needed
-  # - EventName: ShiftApproval   # use as needed
-  # - EventName: RemedyApproval  # use as needed
-  # - EventName: TripApproval    # use as needed
-  # - EventName: AppOpen         # use as needed
-  # - EventName: ContactUser     # use as needed
-  # - EventName: ContactDept     # use as needed
-  # - EventName: ContactScope    # use as needed
-  # - EventName: RemoveBot       # use as needed
-  # - EventName: AddBot          # use as needed
-  # - EventName: P2PChatCreate   # use as needed
-  # - EventName: AppStatusChange # use as needed
+  - EventName: Message                # required
+  # - EventName: AppTicket            # use as needed, ISVApp must
+  # - EventName: Approval             # use as needed
+  # - EventName: LeaveApproval        # use as needed
+  # - EventName: WorkApproval         # use as needed
+  # - EventName: ShiftApproval        # use as needed
+  # - EventName: RemedyApproval       # use as needed
+  # - EventName: TripApproval         # use as needed
+  # - EventName: AppOpen              # use as needed
+  # - EventName: ContactUser          # use as needed
+  # - EventName: ContactDept          # use as needed
+  # - EventName: ContactScope         # use as needed
+  # - EventName: RemoveBot            # use as needed
+  # - EventName: AddBot               # use as needed
+  # - EventName: P2PChatCreate        # use as needed
+  # - EventName: AppStatusChange      # use as needed
+  # - EventName: UserToChat           # use as needed
+  # - EventName: ChatDisband          # use as needed
+  # - EventName: GroupSettingUpdate   # use as needed
+  # - EventName: OrderPaid            # use as needed
+  # - EventName: CreateWidgetInstance # use as needed
+  # - EventName: DeleteWidgetInstance # use as needed
+  # - EventName: MessageRead          # use as needed
 CommandList:
   - Cmd: default # required
     Description: Text that is empty or isnot matched

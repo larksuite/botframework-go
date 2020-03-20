@@ -30,6 +30,7 @@
 - 应用商店应用购买
 - 创建小组件实例事件
 - 删除小组件实例事件
+- 消息已读事件通知
 
 ## 授权
 获取 tenant_access_token (支持 ISV apps or internal apps)
@@ -142,22 +143,29 @@ ServiceInfo:
   Description: test_demo  # 应用描述信息
   IsISVApp: false         # ISV 应用标志，默认为非ISV应用
 EventList:
-  - EventName: Message           # 必须
-  # - EventName: AppTicket       # 按需使用，ISV应用 必须订阅
-  # - EventName: Approval        # 按需使用
-  # - EventName: LeaveApproval   # 按需使用
-  # - EventName: WorkApproval    # 按需使用
-  # - EventName: ShiftApproval   # 按需使用
-  # - EventName: RemedyApproval  # 按需使用
-  # - EventName: TripApproval    # 按需使用
-  # - EventName: AppOpen         # 按需使用
-  # - EventName: ContactUser     # 按需使用
-  # - EventName: ContactDept     # 按需使用
-  # - EventName: ContactScope    # 按需使用
-  # - EventName: RemoveBot       # 按需使用
-  # - EventName: AddBot          # 按需使用
-  # - EventName: P2PChatCreate   # 按需使用
-  # - EventName: AppStatusChange # 按需使用
+  - EventName: Message                # 必须
+  # - EventName: AppTicket            # 按需使用，ISV应用 必须订阅
+  # - EventName: Approval             # 按需使用
+  # - EventName: LeaveApproval        # 按需使用
+  # - EventName: WorkApproval         # 按需使用
+  # - EventName: ShiftApproval        # 按需使用
+  # - EventName: RemedyApproval       # 按需使用
+  # - EventName: TripApproval         # 按需使用
+  # - EventName: AppOpen              # 按需使用
+  # - EventName: ContactUser          # 按需使用
+  # - EventName: ContactDept          # 按需使用
+  # - EventName: ContactScope         # 按需使用
+  # - EventName: RemoveBot            # 按需使用
+  # - EventName: AddBot               # 按需使用
+  # - EventName: P2PChatCreate        # 按需使用
+  # - EventName: AppStatusChange      # 按需使用
+  # - EventName: UserToChat           # 按需使用
+  # - EventName: ChatDisband          # 按需使用
+  # - EventName: GroupSettingUpdate   # 按需使用
+  # - EventName: OrderPaid            # 按需使用
+  # - EventName: CreateWidgetInstance # 按需使用
+  # - EventName: DeleteWidgetInstance # 按需使用
+  # - EventName: MessageRead          # 按需使用
 CommandList:
   - Cmd: Default # 必须
     Description: 表示默认命令，群聊只@机器人而不输入任何其他内容，或收到未定义的命令时
