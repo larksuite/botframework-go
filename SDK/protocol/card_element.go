@@ -328,6 +328,7 @@ type ImageBlockForm struct {
 type ActionBlockForm struct {
 	Tag     string          `json:"tag,omitempty" validate:"omitempty"`
 	Actions []ActionElement `json:"actions,omitempty" validate:"omitempty"`
+	Layout  string          `json:"layout,omitempty" validate:"omitempty"`
 }
 
 // card block - note
