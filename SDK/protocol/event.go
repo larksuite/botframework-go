@@ -35,6 +35,7 @@ const (
 	EventTypeCreateWidgetInstance = "create_widget_instance"                                           // notification--create_widget_instance
 	EventTypeDeleteWidgetInstance = "delete_widget_instance"                                           // notification--delete_widget_instance
 	EventTypeMessageRead          = "message_read"                                                     // notification--message_read
+	EventTypeApprovalInstance     = "approval_instance"                                                // notification--approval_instance
 )
 
 const (
@@ -384,6 +385,15 @@ type MessageReadEvent struct {
 	OpenChatID     string   `json:"open_chat_id"`
 	OpenID         string   `json:"open_id"`
 	OpenMessageIDs []string `json:"open_message_ids"`
+}
+
+type ApprovalInstanceEvent struct {
+	BaseEvent
+
+	ApprovalCode string `json:"approval_code"`
+	InstanceCode string `json:"instance_code"`
+	Status       string `json:"status"`
+	OperateTime  int64  `json:"operate_time"`
 }
 
 // url challenge
