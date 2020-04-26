@@ -393,7 +393,7 @@ type ApprovalInstanceEvent struct {
 	ApprovalCode string `json:"approval_code"`
 	InstanceCode string `json:"instance_code"`
 	Status       string `json:"status"`
-	OperateTime  int64  `json:"operate_time"`
+	OperateTime  string `json:"operate_time"`
 }
 
 // url challenge
