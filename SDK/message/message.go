@@ -120,7 +120,7 @@ func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card
 		Card:  card,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.CardUpdatePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.CardUpdatePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -128,7 +128,8 @@ func UpdateCard(ctx context.Context, tenantKey, appID string, token string, card
 	rspData := &protocol.UpdateCardResponse{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -248,7 +249,7 @@ func sendMsg(ctx context.Context,
 		}
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -256,7 +257,8 @@ func sendMsg(ctx context.Context,
 	rspData := &protocol.SendMsgResponse{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -287,7 +289,7 @@ func sendCardMsg(ctx context.Context,
 		}
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.SendMessagePath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -295,7 +297,8 @@ func sendCardMsg(ctx context.Context,
 	rspData := &protocol.SendCardMsgResponse{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -319,7 +322,7 @@ func sendMsgBatch(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -327,7 +330,8 @@ func sendMsgBatch(ctx context.Context,
 	rspData := &protocol.SendMsgBatchResponse{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -351,7 +355,7 @@ func sendCardMsgBatch(ctx context.Context,
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.SendMessageBatchPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -359,7 +363,8 @@ func sendCardMsgBatch(ctx context.Context,
 	rspData := &protocol.SendCardMsgBatchResponse{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {

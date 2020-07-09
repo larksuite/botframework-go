@@ -25,7 +25,7 @@ func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken),
+	rspBytes, statusCode, err := common.DoHttpGetOApi(protocol.GetChatInfoPath, common.NewHeaderToken(accessToken),
 		protocol.GenGetGroupInfoRequest(chatID))
 
 	if err != nil {
@@ -35,7 +35,8 @@ func GetChatInfo(ctx context.Context, tenantKey, appID string, chatID string) (*
 	rspData := &protocol.GetGroupInfoResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -57,7 +58,7 @@ func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pag
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken),
+	rspBytes, statusCode, err := common.DoHttpGetOApi(protocol.GetChatListPath, common.NewHeaderToken(accessToken),
 		protocol.GenGetGroupListRequest(pageSize, pageToken))
 
 	if err != nil {
@@ -67,7 +68,8 @@ func GetChatList(ctx context.Context, tenantKey, appID string, pageSize int, pag
 	rspData := &protocol.GetGroupListResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -89,7 +91,7 @@ func CreateChat(ctx context.Context, tenantKey, appID string, request *protocol.
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.CreateChatPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.CreateChatPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -97,7 +99,8 @@ func CreateChat(ctx context.Context, tenantKey, appID string, request *protocol.
 	rspData := &protocol.CreateChatResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -119,7 +122,7 @@ func UpdateChatInfo(ctx context.Context, tenantKey, appID string, request *proto
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.UpdateChatInfoPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.UpdateChatInfoPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -127,7 +130,8 @@ func UpdateChatInfo(ctx context.Context, tenantKey, appID string, request *proto
 	rspData := &protocol.UpdateChatInfoResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -149,7 +153,7 @@ func AddUserToChat(ctx context.Context, tenantKey, appID string, request *protoc
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.AddUserToChatPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.AddUserToChatPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -157,7 +161,8 @@ func AddUserToChat(ctx context.Context, tenantKey, appID string, request *protoc
 	rspData := &protocol.AddUserToChatResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -179,7 +184,7 @@ func DeleteUserFromChat(ctx context.Context, tenantKey, appID string, request *p
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.DeleteUserFromChatPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.DeleteUserFromChatPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -187,7 +192,8 @@ func DeleteUserFromChat(ctx context.Context, tenantKey, appID string, request *p
 	rspData := &protocol.DeleteUserFromChatResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -209,7 +215,7 @@ func DisbandChat(ctx context.Context, tenantKey, appID string, request *protocol
 		return nil, err
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.DisbandChatPath, common.NewHeaderToken(accessToken), request)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.DisbandChatPath, common.NewHeaderToken(accessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -217,7 +223,8 @@ func DisbandChat(ctx context.Context, tenantKey, appID string, request *protocol
 	rspData := &protocol.DisbandChatResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {

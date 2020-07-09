@@ -87,7 +87,7 @@ func ReSendAppTicket(ctx context.Context, appID, appSecret string) error {
 		AppSecret: appSecret,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.ResendAppTicketPath, nil, reqData)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.ResendAppTicketPath, nil, reqData)
 	if err != nil {
 		return common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -95,7 +95,8 @@ func ReSendAppTicket(ctx context.Context, appID, appSecret string) error {
 	rspData := &protocol.AppTicketResp{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -188,7 +189,7 @@ func getInternalTenantAccessToken(ctx context.Context, appID, appSecret string) 
 		AppSecret: appSecret,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenInternalPath, nil, reqData)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenInternalPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -196,7 +197,7 @@ func getInternalTenantAccessToken(ctx context.Context, appID, appSecret string) 
 	rspData := &protocol.GetTenantAccessTokenResp{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, fmt.Errorf("jsonUnmarshalError[%v]", err)
+		return nil, fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes))
 	}
 
 	if rspData.Code != 0 {
@@ -211,7 +212,7 @@ func getIsvTenantAccessToken(ctx context.Context, tenantKey, appAccessToken stri
 		TenantKey:      tenantKey,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenIsvPath, nil, reqData)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.GetTenantAccessTokenIsvPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -219,7 +220,7 @@ func getIsvTenantAccessToken(ctx context.Context, tenantKey, appAccessToken stri
 	rspData := &protocol.GetTenantAccessTokenResp{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, fmt.Errorf("jsonUnmarshalError[%v]", err)
+		return nil, fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes))
 	}
 
 	if rspData.Code != 0 {
@@ -234,7 +235,7 @@ func getInternalAppAccessToken(ctx context.Context, appID, appSecret string) (*p
 		AppSecret: appSecret,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenInternalPath, nil, reqData)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenInternalPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -242,7 +243,7 @@ func getInternalAppAccessToken(ctx context.Context, appID, appSecret string) (*p
 	rspData := &protocol.GetAppAccessTokenInternalResp{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, fmt.Errorf("jsonUnmarshalError[%v]", err)
+		return nil, fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes))
 	}
 
 	if rspData.Code != 0 {
@@ -259,7 +260,7 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 		AppTicket: appTicket,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenIsvPath, nil, reqData)
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.GetAppAccessTokenIsvPath, nil, reqData)
 	if err != nil {
 		return nil, fmt.Errorf("doHttpOApiError[%v]", err)
 	}
@@ -267,7 +268,7 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 	rspData := &protocol.GetAppAccessTokenIsvResp{}
 	err = json.Unmarshal(rspBytes, &rspData)
 	if err != nil {
-		return nil, fmt.Errorf("jsonUnmarshalError[%v]", err)
+		return nil, fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes))
 	}
 
 	if rspData.Code != 0 {

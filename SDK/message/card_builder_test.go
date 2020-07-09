@@ -269,7 +269,7 @@ func TestCardSelectPersonMenu(t *testing.T) {
 	builder.SetConfig(config)
 	//add block
 	params := map[string]string{}
-	options := []protocol.OptionForm{protocol.OptionForm{}}
+	options := []protocol.OptionForm{{}}
 	menu := message.NewSelectPersonMenu(message.NewMDText("default", nil, nil, nil),
 		params, options, nil, nil, "selectPersonMenu")
 	builder.AddDIVBlock(message.NewMDText("", nil, nil, nil), nil, menu)

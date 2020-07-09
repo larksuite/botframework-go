@@ -23,8 +23,7 @@ func MiniProgramValidateByAppToken(code string, appAccessToken string) (*protoco
 		Code: code,
 	}
 
-	rspBytes, _, err := common.DoHttpPostOApi(protocol.MPValidateByAppTokenPath, common.NewHeaderToken(appAccessToken), request)
-
+	rspBytes, statusCode, err := common.DoHttpPostOApi(protocol.MPValidateByAppTokenPath, common.NewHeaderToken(appAccessToken), request)
 	if err != nil {
 		return nil, common.ErrOpenApiFailed.ErrorWithExtErr(err)
 	}
@@ -32,7 +31,8 @@ func MiniProgramValidateByAppToken(code string, appAccessToken string) (*protoco
 	rspData := &protocol.MiniProgramLoginByAppTokenResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
@@ -49,7 +49,7 @@ func MiniProgramValidateByIDSecret(code string, appID string, appSecret string) 
 		return nil, common.ErrValidateParams.ErrorWithExtStr("code/appID/appSecret is empty")
 	}
 
-	rspBytes, _, err := common.DoHttpGetOApi(protocol.MPValidateByIDSecretPath, map[string]string{},
+	rspBytes, statusCode, err := common.DoHttpGetOApi(protocol.MPValidateByIDSecretPath, map[string]string{},
 		protocol.GenMiniProgramLoginByIDSecretRequest(code, appID, appSecret))
 
 	if err != nil {
@@ -59,7 +59,8 @@ func MiniProgramValidateByIDSecret(code string, appID string, appSecret string) 
 	rspData := &protocol.MiniProgramLoginByIDSecretResponse{}
 	err = json.Unmarshal(rspBytes, rspData)
 	if err != nil {
-		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(err)
+		return nil, common.ErrJsonUnmarshal.ErrorWithExtErr(
+			fmt.Errorf("jsonUnmarshalError[%v] httpStatusCode[%d] httpBody[%s]", err, statusCode, string(rspBytes)))
 	}
 
 	if rspData.Code != 0 {
