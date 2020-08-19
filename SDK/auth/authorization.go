@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	appTicketManager TicketManager
+	appTicketManager        TicketManager
+	appTicketManagerWithCtx TicketManagerWithCtx
 )
 
 // TicketManager set/get your app-ticket。
@@ -25,12 +26,26 @@ type TicketManager interface {
 	GetAppTicket(appID string) (string, error)
 }
 
+type TicketManagerWithCtx interface {
+	SetAppTicket(ctx context.Context, appID, appTicket string) error
+	GetAppTicket(ctx context.Context, appID string) (string, error)
+}
+
 func InitISVAppTicketManager(ticketManager TicketManager) error {
 	if ticketManager == nil {
 		return errors.New("param ticketManager is nil")
 	}
 
 	appTicketManager = ticketManager
+	return nil
+}
+
+func InitISVAppTicketManagerWithCtx(ticketManager TicketManagerWithCtx) error {
+	if ticketManager == nil {
+		return errors.New("param ticketManager is nil")
+	}
+
+	appTicketManagerWithCtx = ticketManager
 	return nil
 }
 
@@ -108,7 +123,7 @@ func ReSendAppTicket(ctx context.Context, appID, appSecret string) error {
 
 // RefreshAppTicket set app ticket
 func RefreshAppTicket(ctx context.Context, data []byte) error {
-	if appTicketManager == nil {
+	if appTicketManager == nil && appTicketManagerWithCtx == nil {
 		return common.ErrTicketManagerNotInit.Error()
 	}
 
@@ -118,7 +133,7 @@ func RefreshAppTicket(ctx context.Context, data []byte) error {
 		return common.ErrJsonUnmarshal.ErrorWithExtErr(err)
 	}
 
-	err = appTicketManager.SetAppTicket(appTicket.AppID, appTicket.AppTicket)
+	err = setAppTicket(ctx, appTicket.AppID, appTicket.AppTicket)
 	if err != nil {
 		return common.ErrSetAppTicketFailed.ErrorWithExtErr(err)
 	}
@@ -153,7 +168,7 @@ func GetAppAccessToken(ctx context.Context, appID string) (string, error) {
 		appAccessToken = rspData.AppAccessToken
 		expireSecond = rspData.Expire
 	} else {
-		appTicket, err := appTicketManager.GetAppTicket(appID)
+		appTicket, err := getAppTicket(ctx, appID)
 		if err != nil || appTicket == "" {
 			var resultReSend string
 			errReSend := ReSendAppTicket(ctx, appInfo.AppID, appInfo.AppSecret) // donot find appTicket
@@ -274,7 +289,7 @@ func getIsvAppAccessToken(ctx context.Context, appID, appSecret, appTicket strin
 	if rspData.Code != 0 {
 		var resultReSend string
 		if protocol.ErrAppTicketInvalid == rspData.Code || protocol.ErrAppTicketNil == rspData.Code {
-			appTicketManager.SetAppTicket(appID, "") // disable app ticket
+			setAppTicket(ctx, appID, "") // disable app ticket
 
 			errReSend := ReSendAppTicket(ctx, appID, appSecret) // appTicket is invalid, resend appTicket
 			if errReSend != nil {
@@ -328,4 +343,18 @@ func DisableAppToken(ctx context.Context, appID string) {
 	tokenManager.DisableAppAccessToken()
 
 	common.Logger(ctx).Infof("SDK-Disable-AppAccessToken: appID[%s], disable local cache success", appID)
+}
+
+func setAppTicket(ctx context.Context, appID, appTicket string) error {
+	if appTicketManagerWithCtx != nil {
+		return appTicketManagerWithCtx.SetAppTicket(ctx, appID, appTicket)
+	}
+	return appTicketManager.SetAppTicket(appID, appTicket)
+}
+
+func getAppTicket(ctx context.Context, appID string) (string, error) {
+	if appTicketManagerWithCtx != nil {
+		return appTicketManagerWithCtx.GetAppTicket(ctx, appID)
+	}
+	return appTicketManager.GetAppTicket(appID)
 }
