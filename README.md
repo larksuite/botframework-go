@@ -31,6 +31,7 @@ List of supported notification
 - Create a widget instance event
 - Delete a widget instance event
 - Read message
+- App uninstall
 
 ## Authorization
 Obtain tenant_access_token (ISV apps or internal apps)

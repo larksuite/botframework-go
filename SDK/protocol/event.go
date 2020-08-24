@@ -36,6 +36,7 @@ const (
 	EventTypeDeleteWidgetInstance = "delete_widget_instance"                                           // notification--delete_widget_instance
 	EventTypeMessageRead          = "message_read"                                                     // notification--message_read
 	EventTypeApprovalInstance     = "approval_instance"                                                // notification--approval_instance
+	EventTypeAppUninstall         = "app_uninstalled"                                                  // notification--app_uninstalled
 )
 
 const (
@@ -399,4 +400,9 @@ type ApprovalInstanceEvent struct {
 // url challenge
 type ChallengeResponse struct {
 	Challenge string `json:"challenge"`
+}
+
+// AppUninstallEvent when company no longer uses the application
+type AppUninstallEvent struct {
+	BaseEvent
 }
