@@ -5,6 +5,8 @@
 package auth
 
 import (
+	"context"
+
 	"github.com/larksuite/botframework-go/SDK/common"
 )
 
@@ -27,10 +29,10 @@ func NewDefaultAppTicketManager(client common.DBClient) *DefaultAppTicketManager
 	return r
 }
 
-func (a *DefaultAppTicketManager) SetAppTicket(appID, appTicket string) error {
+func (a *DefaultAppTicketManager) SetAppTicket(ctx context.Context, appID, appTicket string) error {
 	return a.Client.Set("appticket:"+appID, appTicket, 0)
 }
 
-func (a *DefaultAppTicketManager) GetAppTicket(appID string) (string, error) {
+func (a *DefaultAppTicketManager) GetAppTicket(ctx context.Context, appID string) (string, error) {
 	return a.Client.Get("appticket:" + appID)
 }
