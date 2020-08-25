@@ -31,6 +31,7 @@
 - 创建小组件实例事件
 - 删除小组件实例事件
 - 消息已读事件通知
+- 应用程序卸载事件
 
 ## 授权
 获取 tenant_access_token (支持 ISV apps or internal apps)
