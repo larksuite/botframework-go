@@ -153,8 +153,9 @@ type Schedule struct {
 type AppOpenEvent struct {
 	BaseEvent
 
-	Applications []UserIDInfo `json:"applicants"`
-	Installer    UserIDInfo   `json:"installer"`
+	Applications      []UserIDInfo `json:"applicants"`
+	Installer         UserIDInfo   `json:"installer"`
+	InstallerEmployee UserIDInfo   `json:"installer_employee"`
 }
 type UserIDInfo struct {
 	OpenID string `json:"open_id"`
