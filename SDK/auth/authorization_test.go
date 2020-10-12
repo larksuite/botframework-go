@@ -249,6 +249,7 @@ func TestAutoDisableTenantToken(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 

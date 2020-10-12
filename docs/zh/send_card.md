@@ -17,9 +17,11 @@ builder := &message.CardBuilder{}
 2. 添加和配置 config    
 ```go
 //add config
-config := protocol.ConfigForm{
-   MinVersion:     protocol.VersionForm{},
-   WideScreenMode: true,
+type ConfigForm struct {
+	MinVersion     VersionForm `json:"min_version,omitempty" validate:"omitempty"`
+	Debug          bool        `json:"debug,omitempty" validate:"omitempty"`
+	WideScreenMode bool        `json:"wide_screen_mode,omitempty" validate:"omitempty"`
+	EnableForward bool        `json:"enable_forward,omitempty" validate:"omitempty"`
 }
 builder.SetConfig(config)
 ```
@@ -236,9 +238,10 @@ func UpdateCard(token, tenantkey, appid string, openid []string) error {
 	builder := &message.CardBuilder{}
 	//add config
 	config := protocol.ConfigForm{
-		MinVersion:     protocol.VersionForm{},
-		WideScreenMode: true,
-	}
+   MinVersion:     protocol.VersionForm{},
+   WideScreenMode: true,
+   EnableForward: false,
+}
 	builder.SetConfig(config)
 
 	//add header

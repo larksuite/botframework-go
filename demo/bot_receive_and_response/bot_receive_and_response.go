@@ -142,6 +142,7 @@ func BotRecvMsgCard(ctx context.Context, msg *protocol.BotRecvMsg) error {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 
@@ -192,6 +193,7 @@ func ActionClickButton(ctx context.Context, callback *protocol.CardCallbackForm)
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 
