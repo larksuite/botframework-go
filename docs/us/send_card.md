@@ -251,10 +251,10 @@ func UpdateCard(token, tenantkey, appid string, openid []string) error {
 	builder := &message.CardBuilder{}
 	//add config
 	config := protocol.ConfigForm{
-   MinVersion:     protocol.VersionForm{},
-   WideScreenMode: true,
-   EnableForward: false,
-}
+       MinVersion:     protocol.VersionForm{},
+       WideScreenMode: true,
+       EnableForward: false,
+    }
 	builder.SetConfig(config)
 
 	//add header
