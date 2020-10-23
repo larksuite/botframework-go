@@ -1,4 +1,4 @@
-# botframework-go
+# botframework-go（Obsolete, no maintenance，[Please see the new version](https://github.com/larksuite/oapi-sdk-go)）
 botframework-go is a golang Software Development Kit which gives tools and interfaces to developers needed to access to Lark Open Platfom APIs.  
 It support for developing a robot application or mini-program application based on the Lark Open Platfom.  
 It support for generateing code using Gin framework.  
