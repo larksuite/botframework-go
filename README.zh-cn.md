@@ -1,4 +1,6 @@
 # botframework-go
+**已过时，请使用 [oapi-sdk-go](https://github.com/larksuite/oapi-sdk-go)**
+
 飞书开放平台应用开发接口 golang 版本 SDK，支持开发者快速搭建和开发飞书应用。  
 支持开发基于飞书开放平台的机器人应用、小程序应用。  
 支持自动生成 gin 框架代码。  
