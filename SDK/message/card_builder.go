@@ -335,7 +335,7 @@ func NewPickerTime(placeHolder *protocol.TextForm, params map[string]string,
 func NewPickerDatetime(placeHolder *protocol.TextForm, params map[string]string,
 	confirm *protocol.ConfirmForm, initialDatetime *string, method string) *protocol.PickerDatetimeForm {
 	form := &protocol.PickerDatetimeForm{}
-	form.Tag = protocol.PICKERTIME_E
+	form.Tag = protocol.PICKERDATETIME_E
 	form.Placeholder = placeHolder
 	form.Params = params
 	form.InitialDatetime = initialDatetime
