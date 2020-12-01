@@ -341,6 +341,7 @@ type ConfigForm struct {
 	MinVersion     VersionForm `json:"min_version,omitempty" validate:"omitempty"`
 	Debug          bool        `json:"debug,omitempty" validate:"omitempty"`
 	WideScreenMode bool        `json:"wide_screen_mode,omitempty" validate:"omitempty"`
+	EnableForward  bool        `json:"enable_forward,omitempty" validate:"omitempty"`
 }
 
 type VersionForm struct {
