@@ -152,6 +152,7 @@ func TestSendCardMessage(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 
@@ -356,9 +357,11 @@ func TestBatchSendCardMessage(t *testing.T) {
 	url := "https://www.google.com"
 	content := "card message test"
 	card := protocol.CardForm{
-		Config: &protocol.ConfigForm{MinVersion: protocol.VersionForm{Version: "1.0"},
+		Config: &protocol.ConfigForm{
+			MinVersion:     protocol.VersionForm{Version: "1.0"},
 			Debug:          true,
 			WideScreenMode: true,
+			EnableForward:  false,
 		},
 		CardLink: &protocol.URLForm{
 			Url: &url,

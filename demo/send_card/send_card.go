@@ -54,6 +54,7 @@ func sendCard(chatID, tenantKey, appID string) error {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 

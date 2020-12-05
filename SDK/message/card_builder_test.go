@@ -31,6 +31,7 @@ func TestCardAsyncButton(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -81,6 +82,7 @@ func TestCardSyncButton(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 
@@ -132,6 +134,7 @@ func TestCardJumpButton(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -172,6 +175,7 @@ func TestCardImage(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -215,6 +219,7 @@ func TestCardSelectStaticMenu(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -265,6 +270,7 @@ func TestCardSelectPersonMenu(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -308,6 +314,7 @@ func TestCardOverFlowMenu(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
@@ -356,6 +363,7 @@ func TestCardDatePicker(t *testing.T) {
 	config := protocol.ConfigForm{
 		MinVersion:     protocol.VersionForm{},
 		WideScreenMode: true,
+		EnableForward:  false,
 	}
 	builder.SetConfig(config)
 	//add block
