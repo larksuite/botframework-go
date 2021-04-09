@@ -98,6 +98,7 @@ type ButtonForm struct {
 	Params   map[string]string `json:"value,omitempty" validate:"omitempty"`
 	Type     string            `json:"type,omitempty" validate:"omitempty"`
 	Confirm  *ConfirmForm      `json:"confirm,omitempty" validate:"omitempty"`
+	Webhook  *string           `json:"webhook,omitempty" validate:"omitempty"`
 }
 
 func (form *ButtonForm) GetTag() string {
