@@ -115,7 +115,7 @@ func (builder *CardBuilder) AddImageBlock(title *protocol.TextForm, alt protocol
 }
 
 // add action block
-func (builder *CardBuilder) AddActionBlock(actions []protocol.ActionElement) *CardBuilder {
+func (builder *CardBuilder) AddActionBlock(actions []protocol.ActionElement, layout string) *CardBuilder {
 	// generate a new session
 	if builder.Session == nil {
 		sid := uuid.New().String()
@@ -128,6 +128,8 @@ func (builder *CardBuilder) AddActionBlock(actions []protocol.ActionElement) *Ca
 		a.SetSession(*builder.Session)
 	}
 	act.Actions = actions
+
+	act.Layout = layout
 
 	if builder.currentLocale != "" {
 		builder.i18nBlocks[builder.currentLocale] = append(builder.i18nBlocks[builder.currentLocale], act)
