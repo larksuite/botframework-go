@@ -37,6 +37,7 @@ const (
 	EventTypeMessageRead          = "message_read"                                                     // notification--message_read
 	EventTypeApprovalInstance     = "approval_instance"                                                // notification--approval_instance
 	EventTypeAppUninstall         = "app_uninstalled"                                                  // notification--app_uninstalled
+	EventTypeBlockEntityCreated   = "block_entity_created"                                             // notification--block_entity_created
 )
 
 const (
