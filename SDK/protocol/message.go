@@ -118,10 +118,11 @@ func (r *RichTextContent) AddElementBlock(elements ...*RichTextElementForm) *Ric
 }
 
 type RichTextElementForm struct {
-	Tag      string  `json:"tag,omitempty" validate:"omitempty"`
-	Text     *string `json:"text,omitempty" validate:"omitempty"`
-	Lines    *int32  `json:"lines,omitempty" validate:"omitempty,min=1,max=100"`
-	UnEscape bool    `json:"un_escape,omitempty" validate:"omitempty"`
+	Tag      string   `json:"tag,omitempty" validate:"omitempty"`
+	Text     *string  `json:"text,omitempty" validate:"omitempty"`
+	Lines    *int32   `json:"lines,omitempty" validate:"omitempty,min=1,max=100"`
+	UnEscape bool     `json:"un_escape,omitempty" validate:"omitempty"`
+	Style    []string `json:"style,omitempty" validate:"omitempty"`
 	//--------------------A-----------------------
 	Href string `json:"href,omitempty" validate:"omitempty"`
 	//--------------------Image-----------------------
